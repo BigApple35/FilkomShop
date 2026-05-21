@@ -11,10 +11,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Google Material Style Custom Floating Label CSS -->
     <style>
         body {
             font-family: 'Instrument Sans', 'Roboto', sans-serif;
@@ -138,7 +136,6 @@
             background-color: rgba(26, 115, 232, 0.04);
         }
 
-        /* Google Segment Selector */
         .google-segment-btn {
             border: 1px solid #dadce0;
             background-color: #ffffff;
