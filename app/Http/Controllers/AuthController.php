@@ -10,9 +10,6 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    /**
-     * Show the login form.
-     */
     public function showLogin()
     {
         if (Auth::check()) {
@@ -21,9 +18,7 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    /**
-     * Handle an authentication attempt.
-     */
+    
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -44,9 +39,7 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    /**
-     * Show the registration form.
-     */
+
     public function showRegister()
     {
         if (Auth::check()) {
@@ -55,9 +48,7 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     */
+    
     public function register(Request $request)
     {
         $request->validate([
@@ -79,9 +70,7 @@ class AuthController extends Controller
         return redirect('/')->with('status', 'Your account has been created successfully!');
     }
 
-    /**
-     * Log the user out of the application.
-     */
+    
     public function logout(Request $request)
     {
         Auth::logout();
