@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -12,7 +13,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+         return view('profile.index', [
+            'user' => Auth::user(),
+        ]);
     }
 
     /**
@@ -36,7 +39,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        
     }
 
     /**
@@ -44,7 +47,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+       return view('profile.edit', [
+            'user' => $user,
+        ]);
     }
 
     /**
@@ -52,7 +57,19 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'min:3'],
+            'email' => ['required', 'string', 'email'],
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return redirect()
+            ->route('profile')
+            ->with('status', 'Profile updated successfully!');
     }
 
     /**
