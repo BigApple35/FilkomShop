@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SellerOrderController;
 
 // Guest Routes
 Route::middleware('guest')->group(function () {
@@ -14,6 +15,13 @@ Route::middleware('guest')->group(function () {
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+
+
+Route::prefix('seller')->group(function () {
+    Route::get('/orders', [SellerOrderController::class, 'index'])->name('seller.orders.index');
+    Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
 });
 
 // Root Route
