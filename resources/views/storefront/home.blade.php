@@ -78,12 +78,16 @@
             <ul class="navbar-nav me-auto ms-4">
 
                 <li class="nav-item">
+
                     <a class="nav-link active" href="/">
                         Home
                     </a>
+
                 </li>
 
             </ul>
+
+            <!-- SEARCH -->
 
             <form action="/" method="GET" class="d-flex me-3">
 
@@ -101,13 +105,40 @@
 
             </form>
 
-            <a href="/login" class="btn btn-outline-light me-2">
-                Login
-            </a>
+            <!-- AUTH -->
 
-            <a href="#" class="btn btn-warning">
-                Cart
-            </a>
+            @guest
+
+                <a href="/login" class="btn btn-outline-light me-2">
+                    Login
+                </a>
+
+                <a href="/register" class="btn btn-warning">
+                    Register
+                </a>
+
+            @endguest
+
+
+            @auth
+
+                <span class="text-white me-3">
+
+                    Hi, {{ auth()->user()->name }}
+
+                </span>
+
+                <form action="/logout" method="POST">
+
+                    @csrf
+
+                    <button class="btn btn-danger">
+                        Logout
+                    </button>
+
+                </form>
+
+            @endauth
 
         </div>
 
@@ -119,7 +150,7 @@
 
 <div class="container py-5">
 
-    <!-- HERO SECTION -->
+    <!-- HERO -->
 
     <div class="hero-section mb-5">
 
@@ -147,7 +178,7 @@
 
     </div>
 
-    <!-- PRODUCT LIST -->
+    <!-- PRODUCTS -->
 
     <div class="row">
 
