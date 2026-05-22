@@ -13,7 +13,9 @@ class UserController extends Controller
      */
     public function index()
     {
-         
+         return view('profile.index', [
+            'user' => Auth::user(),
+        ]);
     }
 
     /**
@@ -37,9 +39,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('profile.index', [
-            'user' => Auth::user(),
-        ]);
+        
     }
 
     /**
