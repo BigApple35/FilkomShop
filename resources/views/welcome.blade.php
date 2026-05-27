@@ -93,7 +93,7 @@
                                         name="search"
                                         value="{{ request('search') }}"
                                         placeholder="Search product..."
-                                        class="w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-white"
+                                        class="bg-white w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-gray"
                                     >
 
                                     <button
@@ -109,7 +109,7 @@
 
                             <div class="rounded-xl px-3 py-2 shadow-lg">
 
-                                <div class="bg-yellow-400 text-white px-4 py-2 rounded-lg font-semibold">
+                                <div class="bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold">
                                     Admin
                                 </div>
 
