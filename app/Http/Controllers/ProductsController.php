@@ -4,62 +4,90 @@ namespace App\Http\Controllers;
 
 use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if (
+            !Auth::check() ||
+            Auth::user()->role !== 'admin'
+        ) {
+            return response()->view(
+                'welcome',
+                [
+                    'page' => 'access-denied',
+                ],
+                403
+            );
+        }
+
+        $products = Products::query()
+            ->when($request->search, function ($query) use ($request) {
+                $query->where(
+                    'name',
+                    'like',
+                    '%' . $request->search . '%'
+                );
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('welcome', [
+            'page' => 'admin-products',
+            'products' => $products,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Products $products)
     {
-        //
+        if (
+            !Auth::check() ||
+            Auth::user()->role !== 'admin'
+        ) {
+            return response()->view(
+                'welcome',
+                [
+                    'page' => 'access-denied',
+                ],
+                403
+            );
+        }
+
+        $allProducts = Products::latest()
+            ->paginate(10);
+
+        return view('welcome', [
+            'page' => 'admin-products',
+            'products' => $allProducts,
+            'productDetail' => $products,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Products $products)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Products $products)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Products $products)
     {
-        //
+        if (
+            !Auth::check() ||
+            Auth::user()->role !== 'admin'
+        ) {
+            return response()->view(
+                'welcome',
+                [
+                    'page' => 'access-denied',
+                ],
+                403
+            );
+        }
+
+        $products->delete();
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with(
+                'success',
+                'Product deleted successfully.'
+            );
     }
 }
