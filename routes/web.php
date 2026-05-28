@@ -9,6 +9,7 @@ use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductManagementController;
+use App\Http\Controllers\OrderController;
 
 
 /*
@@ -37,7 +38,7 @@ Route::middleware('guest')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
+
 
 
 
@@ -102,13 +103,12 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-});
 
-Route::put('/orders/{order}', [OrderController::class, 'update']) ->name('orders.update');
-Route::get('/orders', [OrderController::class, 'index'])
-    ->name('orders.index');
+    Route::put('/orders/{order}', [OrderController::class, 'update']) ->name('orders.update');
+    Route::get('/orders', [OrderController::class, 'index']) ->name('orders.index');
 
 });
+
 /*
 |--------------------------------------------------------------------------
 | Storefront Routes
