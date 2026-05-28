@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SellerOrderController;
+use App\Http\Controllers\CheckoutHistoryController;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StorefrontController;
@@ -36,6 +38,23 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
+
+
+Route::prefix('seller')->group(function () {
+    Route::get('/orders', [SellerOrderController::class, 'index'])->name('seller.orders.index');
+    Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
+});
+
+
+Route::prefix('history')->group(function () {
+    Route::get('/', [CheckoutHistoryController::class, 'index'])->name('history.index');
+    Route::get('/{id}', [CheckoutHistoryController::class, 'show'])->name('history.show');
+    Route::delete('/{id}', [CheckoutHistoryController::class, 'destroy'])->name('history.destroy');
+});
+
+// Root Route
+Route::get('/', function () {
+    return view('welcome');
     /*
     |--------------------------------------------------------------------------
     | Logout
