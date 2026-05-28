@@ -107,7 +107,8 @@ Route::middleware(['auth'])->group(function () {
 Route::put('/orders/{order}', [OrderController::class, 'update']) ->name('orders.update');
 Route::get('/orders', [OrderController::class, 'index'])
     ->name('orders.index');
-    
+
+});
 /*
 |--------------------------------------------------------------------------
 | Storefront Routes
