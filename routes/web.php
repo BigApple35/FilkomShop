@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\CartController;
+
+use App\Http\Controllers\Admin\ProductManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,18 +16,17 @@ use App\Http\Controllers\CartController;
 
 Route::middleware('guest')->group(function () {
 
-    // Login
     Route::get('/login', [AuthController::class, 'showLogin'])
         ->name('login');
 
     Route::post('/login', [AuthController::class, 'login']);
 
-    // Register
     Route::get('/register', [AuthController::class, 'showRegister'])
         ->name('register');
 
     Route::post('/register', [AuthController::class, 'register']);
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -34,28 +36,49 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout');
-
     /*
     |--------------------------------------------------------------------------
-    | Cart Routes
+    | Logout
     |--------------------------------------------------------------------------
     */
 
-    // View cart
-    Route::get('/cart', [CartController::class, 'index'])
-        ->name('cart.index');
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
 
-    // Add to cart
-    Route::get('/cart/add/{id}', [CartController::class, 'add'])
-        ->name('cart.add');
 
-    // Delete cart item
-    Route::get('/cart/delete/{id}', [CartController::class, 'delete'])
-        ->name('cart.delete');
+    /*
+    |--------------------------------------------------------------------------
+    | Shopping Cart
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/cart', [CartController::class, 'index']);
+
+    Route::get('/cart/add/{id}', [CartController::class, 'add']);
+
+    Route::get('/cart/delete/{id}', [CartController::class, 'delete']);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin - Manage Products
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/admin/products', [ProductManagementController::class, 'index']);
+
+    Route::get('/admin/products/create', [ProductManagementController::class, 'create']);
+
+    Route::post('/admin/products/store', [ProductManagementController::class, 'store']);
+
+    Route::get('/admin/products/edit/{id}', [ProductManagementController::class, 'edit']);
+
+    Route::post('/admin/products/update/{id}', [ProductManagementController::class, 'update']);
+
+    Route::get('/admin/products/delete/{id}', [ProductManagementController::class, 'delete']);
+
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -63,14 +86,8 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-// Homepage storefront
-Route::get('/', [StorefrontController::class, 'index'])
-    ->name('storefront');
+Route::get('/', [StorefrontController::class, 'index']);
 
-// Detail produk
-Route::get('/product/{id}', [StorefrontController::class, 'show'])
-    ->name('product.detail');
+Route::get('/product/{id}', [StorefrontController::class, 'show']);
 
-// View store seller
-Route::get('/store/{sellerId}', [StorefrontController::class, 'store'])
-    ->name('store.view');
+Route::get('/store/{sellerId}', [StorefrontController::class, 'store']);
