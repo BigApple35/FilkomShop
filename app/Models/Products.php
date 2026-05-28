@@ -19,11 +19,13 @@ class Products extends Model
         'price',
         'stock',
         'image_url',
+        'image_urls',
         'is_active',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'is_active' => 'boolean',
+        'image_urls' => 'array',
     ];
 }

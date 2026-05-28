@@ -6,5 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Seller extends Model
 {
-    //
+    protected $table = 'seller_profiles';
+
+    protected $fillable = [
+        'user_id',
+        'shop_name',
+        'description',
+        'address',
+        'phone',
+    ];
 }
