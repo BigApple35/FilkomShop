@@ -14,7 +14,7 @@ class ProductsController extends Controller
     public function index(Request $request)
     {
         if (Auth::check() && Auth::user()->role === 'admin') {
-            $products = Products::query()
+            $products = Products::with('seller.user')
                 ->when($request->search, function ($query) use ($request) {
                     $query->where(
                         'name',
@@ -32,7 +32,7 @@ class ProductsController extends Controller
             ]);
         }
 
-        $products = Products::query()
+        $products = Products::with('seller.user')
             ->where('is_active', true)
             ->when($request->search, function ($query) use ($request) {
                 $query->where(
@@ -147,9 +147,27 @@ class ProductsController extends Controller
             );
         }
 
+        // Jika seller, hanya boleh edit product miliknya sendiri
+        if (Auth::user()->role === 'seller') {
+
+            $seller = Seller::where('user_id', Auth::id())->first();
+
+            if (!$seller || $products->seller_id !== $seller->id) {
+
+                return response()->view(
+                    'welcome',
+                    [
+                        'page' => 'access-denied',
+                    ],
+                    403
+                );
+
+            }
+        }
+
         return view('welcome', [
             'page' => 'admin-product-form',
-            'productDetail' => $products,
+            'productDetail' => $products->load('seller.user'),
             'categories' => Categories::all(),
             'sellers' => Auth::user()->role === 'admin' ? Seller::all() : null,
         ]);
@@ -167,6 +185,24 @@ class ProductsController extends Controller
             );
         }
 
+        // Jika seller, hanya boleh update product miliknya sendiri
+        if (Auth::user()->role === 'seller') {
+
+            $seller = Seller::where('user_id', Auth::id())->first();
+
+            if (!$seller || $products->seller_id !== $seller->id) {
+
+                return response()->view(
+                    'welcome',
+                    [
+                        'page' => 'access-denied',
+                    ],
+                    403
+                );
+
+            }
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -179,18 +215,6 @@ class ProductsController extends Controller
             'seller_id' => 'nullable|exists:seller_profiles,id',
         ]);
 
-        $sellerId = $this->resolveSellerId($request);
-        if (!$sellerId) {
-            return response()->view(
-                'welcome',
-                [
-                    'page' => 'access-denied',
-                ],
-                403
-            );
-        }
-
-        $products->seller_id = $sellerId;
         $products->category_id = $validated['category_id'] ?? null;
         $products->name = $validated['name'];
         $products->description = $validated['description'] ?? null;
@@ -199,15 +223,21 @@ class ProductsController extends Controller
         $products->is_active = $validated['is_active'] ?? true;
 
         $imageUrls = $products->image_urls ?? [];
+
         if ($request->hasFile('images')) {
+
             foreach ($request->file('images') as $image) {
+
                 $path = $image->store('products', 'public');
                 $imageUrls[] = Storage::url($path);
+
             }
         }
 
         if (count($imageUrls) > 0) {
+
             $products->image_urls = $imageUrls;
+
             if (!$products->image_url) {
                 $products->image_url = $imageUrls[0];
             }
@@ -236,8 +266,15 @@ class ProductsController extends Controller
 
     public function show(Products $products)
     {
-        if (Auth::check() && in_array(Auth::user()->role, ['admin', 'seller'])) {
-            $allProducts = Products::latest()
+        // Reload lengkap dengan relasi
+        $products = Products::with('seller.user')
+            ->findOrFail($products->id);
+
+        // ADMIN
+        if (Auth::check() && Auth::user()->role === 'admin') {
+
+            $allProducts = Products::with('seller.user')
+                ->latest()
                 ->paginate(10);
 
             return view('welcome', [
@@ -247,6 +284,35 @@ class ProductsController extends Controller
             ]);
         }
 
+        // SELLER
+        if (Auth::check() && Auth::user()->role === 'seller') {
+
+            $seller = Seller::where('user_id', Auth::id())->first();
+
+            if (!$seller || $products->seller_id !== $seller->id) {
+
+                return response()->view(
+                    'welcome',
+                    [
+                        'page' => 'access-denied',
+                    ],
+                    403
+                );
+            }
+
+            $allProducts = Products::with('seller.user')
+                ->where('seller_id', $seller->id)
+                ->latest()
+                ->paginate(10);
+
+            return view('welcome', [
+                'page' => 'admin-products',
+                'products' => $allProducts,
+                'productDetail' => $products,
+            ]);
+        }
+
+        // CUSTOMER / GUEST
         return view('welcome', [
             'page' => 'product-detail',
             'productDetail' => $products,
@@ -255,10 +321,7 @@ class ProductsController extends Controller
 
     public function destroy(Products $products)
     {
-        if (
-            !Auth::check() ||
-            Auth::user()->role !== 'admin'
-        ) {
+        if (!Auth::check()) {
             return response()->view(
                 'welcome',
                 [
@@ -268,14 +331,51 @@ class ProductsController extends Controller
             );
         }
 
-        $products->delete();
+        // Admin boleh hapus semua product
+        if (Auth::user()->role === 'admin') {
+            $products->delete();
 
-        return redirect()
-            ->route('admin.products.index')
-            ->with(
-                'success',
-                'Product deleted successfully.'
-            );
+            return redirect()
+                ->route('admin.products.index')
+                ->with(
+                    'success',
+                    'Product deleted successfully.'
+                );
+        }
+
+        // Seller hanya boleh hapus product miliknya sendiri
+        if (Auth::user()->role === 'seller') {
+
+            $seller = Seller::where('user_id', Auth::id())->first();
+
+            if (!$seller || $products->seller_id !== $seller->id) {
+                return response()->view(
+                    'welcome',
+                    [
+                        'page' => 'access-denied',
+                    ],
+                    403
+                );
+            }
+
+            $products->delete();
+
+            return redirect()
+                ->route('admin.products.index')
+                ->with(
+                    'success',
+                    'Product deleted successfully.'
+                );
+        }
+
+        // Customer tidak boleh delete
+        return response()->view(
+            'welcome',
+            [
+                'page' => 'access-denied',
+            ],
+            403
+        );
     }
 
     public function uploadImage(Request $request, Products $products)

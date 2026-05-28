@@ -2,15 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Products extends Model
 {
-    use HasFactory;
-
-    protected $table = 'products';
-
     protected $fillable = [
         'seller_id',
         'category_id',
@@ -24,8 +19,12 @@ class Products extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'is_active' => 'boolean',
         'image_urls' => 'array',
+        'is_active' => 'boolean',
     ];
+
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class, 'seller_id');
+    }
 }

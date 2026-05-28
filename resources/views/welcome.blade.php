@@ -68,13 +68,24 @@
                             >
                                 FILKOMSHOP
                             </a>
-
-                            <a
-                                href="/"
+                            
+                                                        <a
+                                href="{{ route('admin.products.index') }}"
                                 class="text-gray-300 hover:text-white transition"
                             >
-                                Home
+                                Product List
                             </a>
+
+                            @if(Auth::check() && Auth::user()->role === 'admin')
+
+                                <a
+                                    href="{{ route('admin.users.index') }}"
+                                    class="text-gray-300 hover:text-white transition"
+                                >
+                                    Manage Users
+                                </a>
+
+                            @endif
 
                         </div>
 
@@ -107,13 +118,29 @@
 
                             </div>
 
-                            <div class="rounded-xl px-3 py-2 shadow-lg">
+                            @if(Auth::check())
 
-                                <div class="bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold">
-                                    Admin
+                                <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
+
+                                    <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
+
+                                    <div class="text-left">
+
+                                        <div class="text-white font-semibold leading-tight">
+                                            {{ Auth::user()->name }}
+                                        </div>
+
+                                        <div class="text-xs text-gray-300">
+                                            {{ ucfirst(Auth::user()->role) }}
+                                        </div>
+
+                                    </div>
+
                                 </div>
 
-                            </div>
+                            @endif
 
                             @auth
 
@@ -229,24 +256,26 @@
 
                                 <div class="space-y-5">
                                     <div>
-                                        <h2 class="text-4xl font-bold text-[#1f232b]">{{ $productDetail->name }}</h2>
-                                        <p class="text-slate-500 mt-2">Toko Emas Jaya</p>
+                                        <h2 class="text-4xl font-bold text-[#1f232b] break-all">{{ $productDetail->name }}</h2>
+                                        <p class="text-sm text-gray-500">
+                                            Seller: {{ $product->seller->user->name ?? 'Unknown Seller' }}
+                                        </p>
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4 text-sm text-slate-600">
                                         <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                                             <div class="text-slate-400">Price</div>
-                                            <div class="mt-2 text-2xl font-semibold text-[#1f232b]">Rp {{ number_format($productDetail->price, 0, ',', '.') }}</div>
+                                            <div class="mt-2 text-2xl font-semibold text-[#1f232b] break-all">Rp {{ number_format($productDetail->price, 0, ',', '.') }}</div>
                                         </div>
                                         <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                                             <div class="text-slate-400">Stock</div>
-                                            <div class="mt-2 text-2xl font-semibold text-[#1f232b]">{{ $productDetail->stock }}</div>
+                                            <div class="mt-2 text-2xl font-semibold text-[#1f232b] break-all">{{ $productDetail->stock }}</div>
                                         </div>
                                     </div>
 
                                     <div class="rounded-[1.7rem] border border-slate-200 bg-slate-50 p-6 text-slate-600">
-                                        <div class="text-sm uppercase tracking-[0.2em] text-slate-400">Description</div>
-                                        <p class="mt-3 leading-relaxed">{{ $productDetail->description }}</p>
+                                        <div class="text-sm uppercase tracking-[0.2em] text-slate-400 break-all">Description</div>
+                                        <p class="mt-3 leading-relaxed break-all">{{ $productDetail->description }}</p>
                                     </div>
 
                                     <div class="grid gap-4">
@@ -307,7 +336,7 @@
 
                                         </div>
 
-<div class="flex flex-col gap-3 mt-5">
+                                <div class="flex flex-col gap-3 mt-5">
 
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
 
@@ -437,9 +466,9 @@
                         <div class="flex items-center gap-4">
 
                             <form
-                                action="{{ route('products.index') }}"
+                                action="{{ route('admin.products.index') }}"
                                 method="GET"
-                                class="flex items-center gap-2 rounded-xl px-3 py-2 shadow-lg bg-white"
+                                class="flex items-center gap-2"
                             >
 
                                 <input
@@ -452,11 +481,11 @@
 
                                 <button
                                     type="submit"
-                                    class="bg-[#1f232b] hover:bg-[#343a46] text-white px-4 py-2 rounded-lg font-medium"
+                                    class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium"
                                 >
                                     Search
                                 </button>
-
+                                
                             </form>
 
                             @auth
@@ -466,12 +495,28 @@
                                 >
                                     View Cart
                                 </a>
+                                @if(Auth::check())
+                                    <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
+                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="text-white font-semibold leading-tight">
+                                                {{ Auth::user()->name }}
+                                            </div>
+                                            <div class="text-xs text-gray-300">
+                                                {{ ucfirst(Auth::user()->role) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="rounded-xl px-3 py-2 shadow-lg">
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Logout</button>
                                     </form>
                                 </div>
+
                             @else
                                 <div class="flex gap-2">
                                     <a href="{{ route('login') }}" class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Login</a>
@@ -529,9 +574,12 @@
                                             No image available
                                         </div>
                                     @endif
-                                    <h3 class="text-3xl font-bold text-[#1f232b]">{{ $product->name }}</h3>
-                                    <p class="text-gray-500 mt-2">Rp {{ number_format($product->price,0,',','.') }}</p>
-                                    <p class="text-gray-500 mt-1">Stock: {{ $product->stock }}</p>
+                                    <h3 class="text-3xl font-bold text-[#1f232b] break-all">{{ $product->name }}</h3>
+                                    <p class="text-sm text-gray-500">
+                                        Seller: {{ $product->seller->user->name ?? 'Unknown Seller' }}
+                                    </p>
+                                    <p class="text-gray-500 mt-2 break-all">Rp {{ number_format($product->price,0,',','.') }}</p>
+                                    <p class="text-gray-500 mt-1 break-all">Stock: {{ $product->stock }}</p>
                                 </div>
 
                                     <div class="flex flex-col gap-3">
@@ -595,6 +643,345 @@
 
         </div>
 
+    @elseif(isset($page) && $page === 'admin-users')
+
+        <div class="min-h-screen bg-[#f3f3f3]">
+
+            <nav class="fixed left-0 right-0 top-0 w-full z-50 bg-slate-950 shadow-lg border-b border-slate-800" style="background-color: #1f232b;">
+
+                <div class="max-w-7xl mx-auto px-6">
+
+                    <div class="flex justify-between items-center h-16">
+
+                        <div class="flex items-center gap-10">
+
+                            <a
+                                href="/"
+                                class="text-3xl font-extrabold text-white tracking-wide"
+                            >
+                                FILKOMSHOP
+                            </a>
+
+                            <a
+                                href="{{ route('admin.products.index') }}"
+                                class="text-gray-300 hover:text-white transition"
+                            >
+                                Product List
+                            </a>
+
+                            <a
+                                href="{{ route('admin.users.index') }}"
+                                class="text-white font-semibold"
+                            >
+                                Manage Users
+                            </a>
+
+                        </div>
+
+                        <div class="flex items-center gap-4">
+
+                            @if(Auth::check())
+
+                                <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
+
+                                    <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
+
+                                    <div class="text-left">
+
+                                        <div class="text-white font-semibold leading-tight">
+                                            {{ Auth::user()->name }}
+                                        </div>
+
+                                        <div class="text-xs text-gray-300">
+                                            {{ ucfirst(Auth::user()->role) }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            @endif
+
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+
+                                <button
+                                    type="submit"
+                                    class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium"
+                                >
+                                    Logout
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </nav>
+
+            <div class="max-w-7xl mx-auto px-6 pt-28 pb-10">
+
+                <div class="flex items-center justify-between mb-8">
+
+                    <div>
+
+                        <h1 class="text-5xl font-bold text-[#1f232b]">
+                            Manage Users
+                        </h1>
+
+                        <p class="text-gray-500 text-xl mt-2">
+                            View, read, and delete registered users
+                        </p>
+
+                    </div>
+
+                </div>
+
+                @if(session('success'))
+
+                    <div class="bg-green-100 border border-green-300 text-green-700 px-5 py-4 rounded-2xl mb-6">
+
+                        {{ session('success') }}
+
+                    </div>
+
+                @endif
+
+                @isset($userDetail)
+
+                    <div class="mb-6">
+
+                        <button
+                            type="button"
+                            onclick="history.back()"
+                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-[#1f232b] shadow-sm hover:bg-slate-50"
+                        >
+                            ← Back
+                        </button>
+
+                    </div>
+
+                    <div class="bg-white rounded-[2rem] border border-slate-200 shadow-xl p-10">
+
+                        <div class="space-y-6">
+
+                            <div>
+
+                                <h2 class="text-4xl font-bold text-[#1f232b]">
+                                    {{ $userDetail->name }}
+                                </h2>
+
+                                <p class="text-gray-500 text-lg mt-2">
+                                    {{ $userDetail->email }}
+                                </p>
+
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+
+                                    <div class="text-gray-400 text-sm">
+                                        User ID
+                                    </div>
+
+                                    <div class="text-2xl font-bold text-[#1f232b] mt-2">
+                                        #{{ $userDetail->id }}
+                                    </div>
+
+                                </div>
+
+                                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+
+                                    <div class="text-gray-400 text-sm">
+                                        Role
+                                    </div>
+
+                                    <div class="text-2xl font-bold text-[#1f232b] mt-2">
+                                        {{ ucfirst($userDetail->role) }}
+                                    </div>
+
+                                </div>
+
+                                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+
+                                    <div class="text-gray-400 text-sm break-all">
+                                        Email
+                                    </div>
+
+                                    <div class="text-xl font-semibold text-[#1f232b] mt-2 break-all">
+                                        {{ $userDetail->email }}
+                                    </div>
+
+                                </div>
+
+                                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+
+                                    <div class="text-gray-400 text-sm break-all">
+                                        Password (Hashed)
+                                    </div>
+
+                                    <div class="text-sm font-semibold text-[#1f232b] mt-2 break-all">
+                                        {{ $userDetail->password }}
+                                    </div>
+
+                                </div>
+
+                                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+
+                                    <div class="text-gray-400 text-sm break-all">
+                                        Created At
+                                    </div>
+
+                                    <div class="text-xl font-semibold text-[#1f232b] mt-2 break-all">
+                                        {{ $userDetail->created_at }}
+                                    </div>
+
+                                </div>
+
+                                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+
+                                    <div class="text-gray-400 text-sm break-all">
+                                        Updated At
+                                    </div>
+
+                                    <div class="text-xl font-semibold text-[#1f232b] mt-2 break-all">
+                                        {{ $userDetail->updated_at }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <form
+                                action="{{ route('admin.users.destroy', $userDetail->id) }}"
+                                method="POST"
+                            >
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    onclick="return confirm('Delete this user?')"
+                                    class="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-full text-xl font-bold transition"
+                                >
+                                    Delete User
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                @else
+
+                    @if($users->count() > 0)
+
+                        <div class="grid grid-cols-1 gap-8">
+
+                            @foreach($users as $user)
+
+                                <div class="bg-gradient-to-r from-[#1f232b] to-[#343a46] rounded-[2rem] shadow-xl overflow-hidden p-6">
+
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+
+                                        <div class="text-white">
+
+                                            <h2 class="text-3xl font-bold">
+                                                {{ $user->name }}
+                                            </h2>
+
+                                            <p class="text-xl text-gray-300 mt-2">
+                                                {{ $user->email }}
+                                            </p>
+
+                                            <p class="text-lg mt-3">
+                                                Role: {{ ucfirst($user->role) }}
+                                            </p>
+
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full md:w-auto">
+
+                                            <a
+                                                href="{{ route('admin.users.show', $user->id) }}"
+                                                class="bg-white hover:bg-gray-100 text-black text-center py-3 px-6 rounded-full text-lg font-bold transition"
+                                            >
+                                                Read
+                                            </a>
+
+                                            <form
+                                                action="{{ route('admin.users.destroy', $user->id) }}"
+                                                method="POST"
+                                            >
+
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button
+                                                    type="submit"
+                                                    onclick="return confirm('Are you sure you want to delete this user?')"
+                                                    class="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-full text-lg font-bold transition"
+                                                >
+                                                    Delete
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                        <div class="mt-10">
+
+                            {{ $users->links() }}
+
+                        </div>
+
+                    @else
+
+                        <div class="bg-white rounded-2xl shadow-md p-20 text-center">
+
+                            <h2 class="text-5xl font-bold text-[#1f232b]">
+                                No Users Found
+                            </h2>
+
+                            <p class="text-gray-500 mt-5 text-xl">
+                                There are currently no registered users.
+                            </p>
+
+                        </div>
+
+                    @endif
+
+                @endisset
+
+            </div>
+
+            <footer class="bg-[#1f232b] text-white py-6 mt-16">
+
+                <div class="text-center">
+
+                    © 2026 FILKOMSHOP
+
+                </div>
+
+            </footer>
+
+        </div>
+
     @elseif(isset($page) && $page === 'admin-product-form')
 
         <div class="min-h-screen bg-[#f3f3f3]">
@@ -620,8 +1007,65 @@
                             >
                                 Product List
                             </a>
+                            
+                            <a
+                                href="{{ route('admin.users.index') }}"
+                                class="text-gray-300 hover:text-white transition"
+                            >
+                                Manage Users
+                            </a>
+                        </div>
+                        
+                        <div class="rounded-xl px-3 py-2 shadow-lg">
+
+                            <form
+                                action="{{ route('admin.products.index') }}"
+                                method="GET"
+                                class="flex items-center gap-2"
+                            >
+
+                                <input
+                                    type="text"
+                                    name="search"
+                                    value="{{ request('search') }}"
+                                    placeholder="Search product..."
+                                    class="bg-white w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-gray"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium"
+                                >
+                                    Search
+                                </button>
+
+                            </form>
 
                         </div>
+
+                        @if(Auth::check())
+
+                            <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
+
+                                <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+
+                                <div class="text-left">
+
+                                    <div class="text-white font-semibold leading-tight">
+                                        {{ Auth::user()->name }}
+                                    </div>
+
+                                    <div class="text-xs text-gray-300">
+                                        {{ ucfirst(Auth::user()->role) }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        @endif
 
                         <div class="flex items-center gap-4">
 
@@ -776,7 +1220,41 @@
                         <div class="flex items-center gap-4">
 
                             @auth
+                                <form
+                                    action="{{ route('admin.products.index') }}"
+                                    method="GET"
+                                    class="flex items-center gap-2"
+                                >
+                                    <input
+                                        type="text"
+                                        name="search"
+                                        value="{{ request('search') }}"
+                                        placeholder="Search product..."
+                                        class="bg-white w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-gray"
+                                    >
+                                    <button
+                                        type="submit"
+                                        class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium"
+                                    >
+                                        Search
+                                    </button>
+                                </form>
                                 <a href="{{ route('cart.index') }}" class="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium">View Cart</a>
+                                @if(Auth::check())
+                                    <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
+                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="text-white font-semibold leading-tight">
+                                                {{ Auth::user()->name }}
+                                            </div>
+                                            <div class="text-xs text-gray-300">
+                                                {{ ucfirst(Auth::user()->role) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="rounded-xl px-3 py-2 shadow-lg">
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
@@ -825,24 +1303,26 @@
 
                         <div class="space-y-5">
                             <div>
-                                <h1 class="text-4xl font-bold text-[#1f232b]">{{ $productDetail->name }}</h1>
-                                <p class="text-slate-500 mt-2">Toko Emas Jaya</p>
+                                <h1 class="text-4xl font-bold text-[#1f232b] break-all">{{ $productDetail->name }}</h1>
+                                    <p class="text-sm text-gray-500">
+                                        Seller: {{ $productDetail->seller->user->name ?? 'Unknown Seller' }}
+                                    </p>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4 text-sm text-slate-600">
                                 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                                     <div class="text-slate-400">Price</div>
-                                    <div class="mt-2 text-2xl font-semibold text-[#1f232b]">Rp {{ number_format($productDetail->price,0,',','.') }}</div>
+                                    <div class="mt-2 text-2xl font-semibold text-[#1f232b] break-all">Rp {{ number_format($productDetail->price,0,',','.') }}</div>
                                 </div>
                                 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                                     <div class="text-slate-400">Stock</div>
-                                    <div class="mt-2 text-2xl font-semibold text-[#1f232b]">{{ $productDetail->stock }}</div>
+                                    <div class="mt-2 text-2xl font-semibold text-[#1f232b] break-all">{{ $productDetail->stock }}</div>
                                 </div>
                             </div>
 
                             <div class="rounded-[1.7rem] border border-slate-200 bg-slate-50 p-6 text-slate-600">
                                 <div class="text-sm uppercase tracking-[0.2em] text-slate-400">Description</div>
-                                <p class="mt-3 leading-relaxed">{{ $productDetail->description }}</p>
+                                <p class="mt-3 leading-relaxed break-all">{{ $productDetail->description }}</p>
                             </div>
 
                             <div class="grid gap-4">
@@ -892,24 +1372,28 @@
                             >
                                 FILKOMSHOP
                             </a>
-
+                            
                             <a
-                                href="/"
+                                href="/products"
                                 class="text-gray-300 hover:text-white transition"
                             >
-                                Home
+                                Storefront
                             </a>
+
+                            @if(Auth::check() && Auth::user()->role === 'admin')                           
+
+                                <a
+                                    href="{{ route('admin.users.index') }}"
+                                    class="text-gray-300 hover:text-white transition"
+                                >
+                                    Manage Users
+                                </a>
+
+                            @endif
 
                         </div>
 
                         <div class="flex items-center gap-4">
-
-                            <a
-                                href="{{ route('products.index') }}"
-                                class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium"
-                            >
-                                Browse Products
-                            </a>
 
                             <div class="rounded-xl px-3 py-2 shadow-lg">
 
@@ -937,6 +1421,30 @@
                                 </form>
 
                             </div>
+
+                            @if(Auth::check())
+
+                                <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
+
+                                    <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
+
+                                    <div class="text-left">
+
+                                        <div class="text-white font-semibold leading-tight">
+                                            {{ Auth::user()->name }}
+                                        </div>
+
+                                        <div class="text-xs text-gray-300">
+                                            {{ ucfirst(Auth::user()->role) }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            @endif
 
                             <div class="rounded-xl px-3 py-2 shadow-lg">
 
@@ -998,8 +1506,8 @@
                                                 @endif
                                             </div>
                                             <div class="space-y-2">
-                                                <h3 class="text-2xl font-semibold text-[#1f232b]">{{ $item->product->name }}</h3>
-                                                <p class="text-gray-600">Rp {{ number_format($item->product->price,0,',','.') }}</p>
+                                                <h3 class="text-2xl font-semibold text-[#1f232b] break-all">{{ $item->product->name }}</h3>
+                                                <p class="text-gray-600 break-all">Rp {{ number_format($item->product->price,0,',','.') }}</p>
                                             </div>
                                         </div>
 
@@ -1034,7 +1542,18 @@
                                 @endphp
                                 <div class="text-2xl font-bold">Total: Rp {{ number_format($total,0,',','.') }}</div>
                                 <div class="mt-4">
-                                    <button class="bg-yellow-400 text-black px-6 py-3 rounded-xl font-semibold">Proceed to Checkout</button>
+                                    <form action="{{ route('cart.checkout') }}" method="POST">
+
+                                        @csrf
+
+                                        <button
+                                            type="submit"
+                                            class="w-full bg-yellow-400 hover:bg-yellow-500 text-white py-4 rounded-2xl text-lg font-bold transition"
+                                        >
+                                            Proceed To Checkout
+                                        </button>
+
+                                    </form>
                                 </div>
                             </div>
 

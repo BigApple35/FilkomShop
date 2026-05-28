@@ -12,7 +12,10 @@ class Seller extends Model
         'user_id',
         'shop_name',
         'description',
-        'address',
-        'phone',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
