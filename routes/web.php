@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StorefrontController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,15 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
+Route::put('/orders/{order}', [OrderController::class, 'update']) ->name('orders.update');
+Route::get('/orders', [OrderController::class, 'index'])
+    ->name('orders.index');
+    
 /*
 |--------------------------------------------------------------------------
 | Storefront Routes

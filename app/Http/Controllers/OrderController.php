@@ -12,7 +12,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::all(); 
+        
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -52,7 +54,15 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        //
+    $validated = $request->validate([
+        'status' => ['required', 'in:pending,processing,done'],
+    ]);
+
+    $order->update($validated);
+
+    return redirect()
+        ->back()
+        ->with('success', 'Order status updated successfully.');
     }
 
     /**
