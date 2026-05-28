@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StorefrontController;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,24 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('logout');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cart Routes
+    |--------------------------------------------------------------------------
+    */
+
+    // View cart
+    Route::get('/cart', [CartController::class, 'index'])
+        ->name('cart.index');
+
+    // Add to cart
+    Route::get('/cart/add/{id}', [CartController::class, 'add'])
+        ->name('cart.add');
+
+    // Delete cart item
+    Route::get('/cart/delete/{id}', [CartController::class, 'delete'])
+        ->name('cart.delete');
 });
 
 /*
@@ -53,11 +72,5 @@ Route::get('/product/{id}', [StorefrontController::class, 'show'])
     ->name('product.detail');
 
 // View store seller
-Route::get('/store/{id}', [StorefrontController::class, 'store'])
+Route::get('/store/{sellerId}', [StorefrontController::class, 'store'])
     ->name('store.view');
-
-Route::get('/', [StorefrontController::class, 'index']);
-
-Route::get('/product/{id}', [StorefrontController::class, 'show']);
-
-Route::get('/store/{sellerId}', [StorefrontController::class, 'store']);
