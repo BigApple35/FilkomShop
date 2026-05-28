@@ -122,6 +122,10 @@
 
             @auth
 
+                <a href="/cart" class="btn btn-warning me-3">
+                    Cart
+                </a>
+
                 <span class="text-white me-3">
 
                     Hi, {{ auth()->user()->name }}
@@ -220,12 +224,29 @@
 
                         <div class="mt-auto">
 
+                            <!-- VIEW ITEM -->
+
                             <a
                                 href="/product/{{ $product->id }}"
                                 class="btn btn-dark w-100 mb-2"
                             >
                                 View Item
                             </a>
+
+                            <!-- ADD TO CART -->
+
+                            @auth
+
+                                <a
+                                    href="/cart/add/{{ $product->id }}"
+                                    class="btn btn-warning w-100 mb-2"
+                                >
+                                    Add to Cart
+                                </a>
+
+                            @endauth
+
+                            <!-- VISIT STORE -->
 
                             <a
                                 href="/store/{{ $product->seller_id }}"
