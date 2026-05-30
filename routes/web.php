@@ -11,7 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductManagementController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\AdminUserController; // Milikmu
+use App\Http\Controllers\AdminUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,14 +43,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 
-    // Shopping Cart (Versi Baru)
+    // Shopping Cart
     Route::get('/cart', [CartsController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartsController::class, 'store'])->name('cart.store');
     Route::post('/cart/checkout', [CartsController::class, 'checkout'])->name('cart.checkout');
     Route::patch('/cart/item/{id}', [CartsController::class, 'update'])->name('cart.update');
     Route::delete('/cart/item/{id}', [CartsController::class, 'destroy'])->name('cart.destroy');
 
-    // Shopping Cart (Versi Lama - Biarkan jika masih dipakai)
+    // Shopping Cart
     Route::get('/cart/add/{id}', [CartController::class, 'add']);
     Route::get('/cart/delete/{id}', [CartController::class, 'delete']);
 
@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('admin')->group(function () {
-        // Manage Users (View, Read, Delete dari temanmu & Create, Update darimu)
+        // Manage Users
         Route::get('/users', [AuthController::class, 'manageUsers'])->name('admin.users.index');
         Route::get('/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
         Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
