@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductManagementController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductsController;
 
 
 /*
@@ -100,12 +101,37 @@ Route::get('/', function () {
 
 });
 
+    /*
+    |--------------------------------------------------------------------------
+    | Profile & Incoming Orders
+    |--------------------------------------------------------------------------
+    */
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::put('/orders/{order}', [OrderController::class, 'update']) ->name('orders.update');
     Route::get('/orders', [OrderController::class, 'index']) ->name('orders.index');
+
+});
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin - Manage Items
+    |--------------------------------------------------------------------------
+    */
+Route::middleware(['auth'])->group(function () {
+
+    Route::get( '/products',[ProductsController::class, 'index'])->name('products.index');
+
+    Route::get('/products/create',[ProductsController::class, 'create'])->name('products.create');
+
+    Route::post('/products/store',[ProductsController::class, 'store'])->name('products.store');
+
+    Route::get('/products/{product}/edit',[ProductsController::class, 'edit'])->name('products.edit');
+
+    Route::put('/products/{product}',[ProductsController::class, 'update'])->name('products.update');
 
 });
 
