@@ -4,196 +4,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Transaksi #{{ $history->id }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <title>Detail Transaksi - FILKOMSHOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .g-body-wrapper {
-            font-family: 'Roboto', sans-serif;
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #F8F9FA;
-            color: #202124;
-            min-height: 100vh;
-            padding: 40px 24px;
+            color: #212529;
+        }
+
+        .fs-navbar {
+            background-color: #1A1D20;
+            padding: 12px 0;
+        }
+
+        .fs-navbar-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
             display: flex;
-            justify-content: center;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
         }
 
-        .g-container {
+        .fs-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .fs-brand {
+            color: #FFFFFF;
+            font-size: 22px;
+            font-weight: 800;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .fs-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .fs-nav-center {
+            display: flex;
+            gap: 8px;
+        }
+
+        .fs-search-input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: none;
+            width: 300px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .fs-btn-search {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            background: #FFFFFF;
+            color: #212529;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .fs-nav-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .fs-btn-login {
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 7px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            background: transparent;
+        }
+
+        .fs-btn-register {
+            background-color: #FFC107;
+            color: #212529;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .fs-container {
             max-width: 700px;
-            width: 100%;
+            margin: 40px auto;
+            padding: 0 24px;
         }
 
-        .g-top-bar {
+        .fs-header {
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 24px;
         }
 
-        .g-btn-back {
-            text-decoration: none;
-            color: #5F6368;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            transition: background 0.2s;
-        }
-
-        .g-btn-back:hover {
-            background-color: #E8EAED;
-        }
-
-        .g-top-bar h1 {
-            font-size: 22px;
-            font-weight: 400;
+        .fs-title {
+            font-size: 28px;
+            font-weight: 700;
             margin: 0;
-            color: #202124;
+            color: #212529;
         }
 
-        .g-card {
-            background: #FFFFFF !important;
-            border-radius: 12px !important;
-            border: 1px solid #DADCE0 !important;
-            box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1), 0 1px 3px 1px rgba(60, 64, 67, 0.05) !important;
-            padding: 32px !important;
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
+        .fs-btn-back {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 1px solid #CED4DA;
+            border-radius: 4px;
+            background: #FFFFFF;
         }
 
-        .g-info-group {
+        .fs-card {
+            background: #FFFFFF;
+            border-radius: 8px;
+            border: 1px solid #E9ECEF;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .fs-info-group {
             margin-bottom: 24px;
         }
 
-        .g-info-label {
-            font-size: 13px;
-            color: #5F6368;
-            font-weight: 500;
+        .fs-info-label {
+            font-size: 14px;
+            color: #6C757D;
+            font-weight: 600;
             margin-bottom: 8px;
-            letter-spacing: 0.5px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .g-info-value {
+        .fs-info-value {
             font-size: 16px;
-            color: #202124;
-            line-height: 1.5;
+            color: #212529;
         }
 
-        .g-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .fs-badge {
+            display: inline-block;
             padding: 6px 12px;
-            border-radius: 20px;
+            border-radius: 4px;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: capitalize;
         }
 
-        .g-badge::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
+        .fs-badge-pending {
+            background-color: #FFF3CD;
+            color: #856404;
         }
 
-        .g-badge-pending {
-            background-color: #FEF7E0;
-            color: #B06000;
+        .fs-badge-processing {
+            background-color: #CCE5FF;
+            color: #004085;
         }
 
-        .g-badge-pending::before {
-            background-color: #F9AB00;
+        .fs-badge-shipped {
+            background-color: #E2E3E5;
+            color: #383D41;
         }
 
-        .g-badge-processing {
-            background-color: #E8F0FE;
-            color: #1967D2;
+        .fs-badge-delivered {
+            background-color: #D4EDDA;
+            color: #155724;
         }
 
-        .g-badge-processing::before {
-            background-color: #1A73E8;
+        .fs-badge-cancelled {
+            background-color: #F8D7DA;
+            color: #721C24;
         }
 
-        .g-badge-shipped {
-            background-color: #F3E8FD;
-            color: #8430CE;
-        }
-
-        .g-badge-shipped::before {
-            background-color: #9334E6;
-        }
-
-        .g-badge-delivered {
-            background-color: #E6F4EA;
-            color: #137333;
-        }
-
-        .g-badge-delivered::before {
-            background-color: #1E8E3E;
-        }
-
-        .g-badge-cancelled {
-            background-color: #FCE8E6;
-            color: #C5221F;
-        }
-
-        .g-badge-cancelled::before {
-            background-color: #D93025;
-        }
-
-        .g-divider {
+        .fs-divider {
             height: 1px;
-            background-color: #E8EAED;
+            background-color: #E9ECEF;
             margin: 32px 0;
             border: none;
         }
 
-        .g-total-price {
-            font-size: 32px;
-            color: #1A73E8;
-            font-weight: 500;
+        .fs-total-price {
+            font-size: 28px;
+            color: #212529;
+            font-weight: 700;
             margin-top: 8px;
         }
     </style>
 </head>
 
-<body style="margin: 0; padding: 0;">
-    <div class="g-body-wrapper">
-        <div class="g-container">
-            <div class="g-top-bar">
-                <a href="{{ route('history.index') }}" class="g-btn-back">
-                    <span class="material-icons-outlined">arrow_back</span>
-                </a>
-                <h1>Rincian Riwayat</h1>
+<body>
+    <nav class="fs-navbar">
+        <div class="fs-navbar-container">
+            <div class="fs-nav-left">
+                <a href="{{ url('/') }}" class="fs-brand">FILKOMSHOP</a>
+                <a href="{{ url('/') }}" class="fs-nav-link">Home</a>
             </div>
-            <div class="g-card">
-                <div class="g-info-group">
-                    <div class="g-info-label">ID Transaksi</div>
-                    <div class="g-info-value" style="font-weight: 500; color: #1A73E8;">#TRX-{{ $history->id }}</div>
-                </div>
-                <div class="g-info-group">
-                    <div class="g-info-label">Status Pesanan</div>
-                    <span class="g-badge g-badge-{{ strtolower($history->status) }}">{{ $history->status }}</span>
-                </div>
-                <div class="g-info-group">
-                    <div class="g-info-label">Waktu Checkout</div>
-                    <div class="g-info-value">{{ \Carbon\Carbon::parse($history->ordered_at ?? $history->created_at)->format('d M Y, H:i') }} WIB</div>
-                </div>
-                <div class="g-info-group">
-                    <div class="g-info-label">Dikirim Ke</div>
-                    <div class="g-info-value">{{ $history->shipping_address }}</div>
-                </div>
-                <hr class="g-divider">
-                <div class="g-info-group" style="margin-bottom: 0;">
-                    <div class="g-info-label">Total Belanja</div>
-                    <div class="g-total-price">Rp {{ number_format($history->total_amount, 0, ',', '.') }}</div>
-                </div>
+            <div class="fs-nav-center">
+                <input type="text" class="fs-search-input" placeholder="Search product...">
+                <button class="fs-btn-search">Search</button>
+            </div>
+            <div class="fs-nav-right">
+                @auth
+                <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="fs-btn-login" style="cursor:pointer;">Logout</button>
+                </form>
+                @else
+                <a href="{{ route('login') }}" class="fs-btn-login">Login</a>
+                <a href="{{ route('register') }}" class="fs-btn-register">Register</a>
+                @endauth
+            </div>
+        </div>
+    </nav>
+
+    <div class="fs-container">
+        <div class="fs-header">
+            <a href="{{ route('history.index') }}" class="fs-btn-back">Back</a>
+            <h1 class="fs-title">Transaction Details</h1>
+        </div>
+        <div class="fs-card">
+            <div class="fs-info-group">
+                <div class="fs-info-label">Transaction ID</div>
+                <div class="fs-info-value" style="font-weight: 700;">#TRX-{{ $history->id }}</div>
+            </div>
+            <div class="fs-info-group">
+                <div class="fs-info-label">Status</div>
+                <span class="fs-badge fs-badge-{{ strtolower($history->status) }}">{{ $history->status }}</span>
+            </div>
+            <div class="fs-info-group">
+                <div class="fs-info-label">Checkout Date</div>
+                <div class="fs-info-value">{{ \Carbon\Carbon::parse($history->ordered_at ?? $history->created_at)->format('d F Y, H:i') }} WIB</div>
+            </div>
+            <div class="fs-info-group">
+                <div class="fs-info-label">Shipping Address</div>
+                <div class="fs-info-value">{{ $history->shipping_address }}</div>
+            </div>
+            <hr class="fs-divider">
+            <div class="fs-info-group" style="margin-bottom: 0;">
+                <div class="fs-info-label">Total Amount</div>
+                <div class="fs-total-price">Rp {{ number_format($history->total_amount, 0, ',', '.') }}</div>
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Carts;
 use App\Models\Products;
 
 class Cart_Items extends Model
@@ -12,8 +13,13 @@ class Cart_Items extends Model
     protected $fillable = [
         'cart_id',
         'product_id',
-        'quantity'
+        'quantity',
     ];
+
+    public function cart()
+    {
+        return $this->belongsTo(Carts::class, 'cart_id');
+    }
 
     public function product()
     {
