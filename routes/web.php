@@ -6,10 +6,12 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\SellerOrderController;
 use App\Http\Controllers\CheckoutHistoryController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductManagementController;
+use App\Http\Controllers\ItemController; // ← TAMBAHAN UNTUK ITEM MANAGEMENT
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminUserController;
 
@@ -35,6 +37,54 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Seller routes
+    Route::prefix('seller')->group(function () {
+        Route::get('/orders', [SellerOrderController::class, 'index'])->name('seller.orders.index');
+        Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
+    });
+
+    // Checkout history routes
+    Route::prefix('history')->group(function () {
+        Route::get('/', [CheckoutHistoryController::class, 'index'])->name('history.index');
+        Route::get('/{id}', [CheckoutHistoryController::class, 'show'])->name('history.show');
+        Route::delete('/{id}', [CheckoutHistoryController::class, 'destroy'])->name('history.destroy');
+    });
+
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Shopping Cart
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::get('/cart/add/{id}', [CartController::class, 'add']);
+    Route::get('/cart/delete/{id}', [CartController::class, 'delete']);
+
+    // Admin - Manage Products
+    Route::prefix('admin')->group(function () {
+        Route::get('/products', [ProductManagementController::class, 'index']);
+        Route::get('/products/create', [ProductManagementController::class, 'create']);
+        Route::post('/products/store', [ProductManagementController::class, 'store']);
+        Route::get('/products/edit/{id}', [ProductManagementController::class, 'edit']);
+        Route::post('/products/update/{id}', [ProductManagementController::class, 'update']);
+        Route::get('/products/delete/{id}', [ProductManagementController::class, 'delete']);
+    });
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // === TAMBAHAN UNTUK ITEM MANAGEMENT (CREATE + UPDATE) ===
+    Route::resource('items', ItemController::class);
+    // =======================================================
+
+    // Orders (mungkin milik user biasa, bukan seller)
+    Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Storefront Routes (Bebas, tanpa middleware auth)
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -106,6 +156,7 @@ Route::prefix('history')->group(function () {
 */
 Route::get('/', [StorefrontController::class, 'index']);
 Route::get('/product/{id}', [StorefrontController::class, 'show']);
+Route::get('/store/{sellerId}', [StorefrontController::class, 'store']);
 Route::get('/store/{sellerId}', [StorefrontController::class, 'store']);
 
 Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
