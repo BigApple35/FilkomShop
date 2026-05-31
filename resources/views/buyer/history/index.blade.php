@@ -4,322 +4,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Belanja</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <title>Riwayat Belanja - FILKOMSHOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .g-body-wrapper {
-            font-family: 'Roboto', sans-serif;
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #F8F9FA;
-            color: #202124;
-            min-height: 100vh;
-            padding: 40px 24px;
-            display: flex;
-            justify-content: center;
+            color: #212529;
         }
 
-        .g-container {
+        .fs-navbar {
+            background-color: #1A1D20;
+            padding: 12px 0;
+        }
+
+        .fs-navbar-container {
             max-width: 1100px;
-            width: 100%;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
         }
 
-        .g-header {
+        .fs-nav-left {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 32px;
+        }
+
+        .fs-brand {
+            color: #FFFFFF;
+            font-size: 22px;
+            font-weight: 800;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .fs-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .fs-nav-center {
+            display: flex;
+            gap: 8px;
+        }
+
+        .fs-search-input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: none;
+            width: 300px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .fs-btn-search {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            background: #FFFFFF;
+            color: #212529;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .fs-nav-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .fs-btn-login {
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 7px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            background: transparent;
+        }
+
+        .fs-btn-register {
+            background-color: #FFC107;
+            color: #212529;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .fs-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 24px;
+            min-height: 80vh;
+        }
+
+        .fs-header {
             margin-bottom: 24px;
         }
 
-        .g-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .g-title h1 {
-            font-size: 24px;
-            font-weight: 400;
-            margin: 0;
-            color: #202124;
-        }
-
-        .g-title .material-icons-outlined {
-            color: #1A73E8;
+        .fs-title {
             font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: #212529;
         }
 
-        .g-card {
-            background: #FFFFFF !important;
-            border-radius: 12px !important;
-            border: 1px solid #DADCE0 !important;
-            box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1), 0 1px 3px 1px rgba(60, 64, 67, 0.05) !important;
-            overflow: hidden !important;
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
+        .fs-subtitle {
+            color: #6C757D;
+            font-size: 15px;
+            margin: 0;
         }
 
-        .g-table {
+        .fs-alert {
+            background-color: #D4EDDA;
+            color: #155724;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            font-size: 15px;
+            border: 1px solid #C3E6CB;
+        }
+
+        .fs-card {
+            background: #FFFFFF;
+            border-radius: 8px;
+            border: 1px solid #E9ECEF;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+        }
+
+        .fs-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
         }
 
-        .g-table th,
-        .g-table td {
+        .fs-table th,
+        .fs-table td {
             padding: 16px 24px;
-            border-bottom: 1px solid #E8EAED;
+            border-bottom: 1px solid #E9ECEF;
         }
 
-        .g-table th {
-            color: #5F6368;
-            font-weight: 500;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background-color: #FAFAFA;
-        }
-
-        .g-table td {
+        .fs-table th {
+            color: #495057;
+            font-weight: 600;
             font-size: 14px;
-            color: #3C4043;
-            vertical-align: middle;
-        }
-
-        .g-table tr:hover td {
             background-color: #F8F9FA;
         }
 
-        .g-table tr:last-child td {
-            border-bottom: none;
+        .fs-table td {
+            font-size: 15px;
+            color: #212529;
+            vertical-align: middle;
         }
 
-        .g-order-id {
-            font-weight: 500;
-            color: #1A73E8;
+        .fs-table tr:hover td {
+            background-color: #F8F9FA;
         }
 
-        .g-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .fs-badge {
+            display: inline-block;
             padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
             text-transform: capitalize;
         }
 
-        .g-badge::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
+        .fs-badge-pending {
+            background-color: #FFF3CD;
+            color: #856404;
         }
 
-        .g-badge-pending {
-            background-color: #FEF7E0;
-            color: #B06000;
+        .fs-badge-processing {
+            background-color: #CCE5FF;
+            color: #004085;
         }
 
-        .g-badge-pending::before {
-            background-color: #F9AB00;
+        .fs-badge-shipped {
+            background-color: #E2E3E5;
+            color: #383D41;
         }
 
-        .g-badge-processing {
-            background-color: #E8F0FE;
-            color: #1967D2;
+        .fs-badge-delivered {
+            background-color: #D4EDDA;
+            color: #155724;
         }
 
-        .g-badge-processing::before {
-            background-color: #1A73E8;
+        .fs-badge-cancelled {
+            background-color: #F8D7DA;
+            color: #721C24;
         }
 
-        .g-badge-shipped {
-            background-color: #F3E8FD;
-            color: #8430CE;
-        }
-
-        .g-badge-shipped::before {
-            background-color: #9334E6;
-        }
-
-        .g-badge-delivered {
-            background-color: #E6F4EA;
-            color: #137333;
-        }
-
-        .g-badge-delivered::before {
-            background-color: #1E8E3E;
-        }
-
-        .g-badge-cancelled {
-            background-color: #FCE8E6;
-            color: #C5221F;
-        }
-
-        .g-badge-cancelled::before {
-            background-color: #D93025;
-        }
-
-        .g-btn-outline {
-            text-decoration: none;
-            color: #1A73E8;
-            font-weight: 500;
-            font-size: 13px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 16px;
-            border-radius: 20px;
-            border: 1px solid #DADCE0;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            background: transparent;
-        }
-
-        .g-btn-outline:hover {
-            background-color: #F4FAFE;
-            border-color: #D2E3FC;
-        }
-
-        .g-btn-danger {
-            color: #C5221F;
-            border-color: #FCE8E6;
-        }
-
-        .g-btn-danger:hover {
-            background-color: #FCE8E6;
-            border-color: #FAD2CF;
-        }
-
-        .g-btn-outline .material-icons-outlined {
-            font-size: 18px;
-        }
-
-        .g-empty-state {
-            padding: 64px 24px;
-            text-align: center;
-            color: #5F6368;
-        }
-
-        .g-empty-icon {
-            font-size: 64px;
-            color: #DADCE0;
-            margin-bottom: 16px;
-        }
-
-        .g-empty-state h3 {
-            margin: 0 0 8px 0;
-            font-weight: 500;
-            color: #3C4043;
-        }
-
-        .g-empty-state p {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        .g-action-group {
+        .fs-btn-group {
             display: flex;
             gap: 8px;
             justify-content: center;
         }
 
-        .g-alert {
-            background-color: #E6F4EA;
-            color: #137333;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid #CEEAD6;
+        .fs-btn-action {
+            text-decoration: none;
+            color: #212529;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 6px 16px;
+            border-radius: 4px;
+            border: 1px solid #CED4DA;
+            background: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .fs-btn-action:hover {
+            background: #E9ECEF;
+        }
+
+        .fs-btn-danger {
+            color: #DC3545;
+            border-color: #DC3545;
+        }
+
+        .fs-btn-danger:hover {
+            background: #DC3545;
+            color: #FFFFFF;
         }
     </style>
 </head>
 
-<body style="margin: 0; padding: 0;">
-    <div class="g-body-wrapper">
-        <div class="g-container">
-            <div class="g-header">
-                <div class="g-title">
-                    <span class="material-icons-outlined">receipt_long</span>
-                    <h1>Riwayat Belanja</h1>
-                </div>
-                <div style="font-size: 14px; color: #5F6368;">
-                    Total: <strong>{{ count($histories) }}</strong> Transaksi
-                </div>
+<body>
+    <nav class="fs-navbar">
+        <div class="fs-navbar-container">
+            <div class="fs-nav-left">
+                <a href="{{ url('/') }}" class="fs-brand">FILKOMSHOP</a>
+                <a href="{{ url('/') }}" class="fs-nav-link">Home</a>
             </div>
+            <div class="fs-nav-center">
+                <input type="text" class="fs-search-input" placeholder="Search product...">
+                <button class="fs-btn-search">Search</button>
+            </div>
+            <div class="fs-nav-right">
+                @auth
+                <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="fs-btn-login" style="cursor:pointer;">Logout</button>
+                </form>
+                @else
+                <a href="{{ route('login') }}" class="fs-btn-login">Login</a>
+                <a href="{{ route('register') }}" class="fs-btn-register">Register</a>
+                @endauth
+            </div>
+        </div>
+    </nav>
 
-            @if(session('success'))
-            <div class="g-alert">
-                <span class="material-icons-outlined">check_circle</span>
-                {{ session('success') }}
-            </div>
-            @endif
+    <div class="fs-container">
+        <div class="fs-header">
+            <h1 class="fs-title">Check Out History</h1>
+            <p class="fs-subtitle">Browse all your previous purchases. Total: {{ count($histories) }} transactions.</p>
+        </div>
 
-            <div class="g-card">
-                <table class="g-table">
-                    <thead>
-                        <tr>
-                            <th>ID Transaksi</th>
-                            <th>Tanggal Checkout</th>
-                            <th>Status</th>
-                            <th>Total Belanja</th>
-                            <th style="text-align: center;">Tindakan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($histories as $history)
-                        <tr>
-                            <td>
-                                <span class="g-order-id">#TRX-{{ $history->id }}</span>
-                            </td>
-                            <td>
-                                <div style="color: #202124;">{{ \Carbon\Carbon::parse($history->ordered_at ?? $history->created_at)->format('d M Y') }}</div>
-                                <div style="color: #5F6368; font-size: 12px;">{{ \Carbon\Carbon::parse($history->ordered_at ?? $history->created_at)->format('H:i') }} WIB</div>
-                            </td>
-                            <td>
-                                <span class="g-badge g-badge-{{ strtolower($history->status) }}">
-                                    {{ $history->status }}
-                                </span>
-                            </td>
-                            <td style="font-weight: 500;">
-                                Rp {{ number_format($history->total_amount, 0, ',', '.') }}
-                            </td>
-                            <td>
-                                <div class="g-action-group">
-                                    <a href="{{ route('history.show', $history->id) }}" class="g-btn-outline">
-                                        <span class="material-icons-outlined">visibility</span>
-                                    </a>
-                                    <form action="{{ route('history.destroy', $history->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus riwayat transaksi ini?');" style="margin: 0;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="g-btn-outline g-btn-danger">
-                                            <span class="material-icons-outlined">delete</span>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5">
-                                <div class="g-empty-state">
-                                    <span class="material-icons-outlined g-empty-icon">history_toggle_off</span>
-                                    <h3>Belum Ada Riwayat Belanja</h3>
-                                    <p>Anda belum pernah melakukan checkout barang.</p>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+        @if(session('success'))
+        <div class="fs-alert">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        <div class="fs-card">
+            <table class="fs-table">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total Amount</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($histories as $history)
+                    <tr>
+                        <td style="font-weight: 600;">#TRX-{{ $history->id }}</td>
+                        <td>
+                            <div>{{ \Carbon\Carbon::parse($history->ordered_at ?? $history->created_at)->format('d M Y') }}</div>
+                            <div style="color: #6C757D; font-size: 13px;">{{ \Carbon\Carbon::parse($history->ordered_at ?? $history->created_at)->format('H:i') }} WIB</div>
+                        </td>
+                        <td>
+                            <span class="fs-badge fs-badge-{{ strtolower($history->status) }}">{{ $history->status }}</span>
+                        </td>
+                        <td style="font-weight: 600;">Rp {{ number_format($history->total_amount, 0, ',', '.') }}</td>
+                        <td>
+                            <div class="fs-btn-group">
+                                <a href="{{ route('history.show', $history->id) }}" class="fs-btn-action">View</a>
+                                <form action="{{ route('history.destroy', $history->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this history?');" style="margin: 0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="fs-btn-action fs-btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 48px; color: #6C757D;">
+                            <div style="font-size: 20px; font-weight: 600; color: #212529; margin-bottom: 8px;">No History Yet</div>
+                            You haven't made any purchases.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </body>

@@ -62,7 +62,7 @@ class OrderController extends Controller
 
     return redirect()
         ->back()
-        ->with('success', 'Order status updated successfully.');
+        ->with('success', 'Order updated successfully.');
     }
 
     /**
