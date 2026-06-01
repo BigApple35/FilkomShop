@@ -144,6 +144,21 @@ class ProductsController extends Controller
             ]);
         }
 
+        // Seller: show only their own products
+        if (Auth::check() && Auth::user()->role === 'seller') {
+            $seller = Seller::where('user_id', Auth::id())->first();
+            $products = Products::with('seller.user')
+                ->where('seller_id', $seller?->id)
+                ->when($request->search, function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->search . '%');
+                })
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+
+            return view('seller.products.index', compact('products'));
+        }
+
         $products = Products::with('seller.user')
             ->where('is_active', true)
             ->when($request->search, function ($query) use ($request) {
@@ -175,10 +190,17 @@ class ProductsController extends Controller
             );
         }
 
+        // Seller gets dedicated seller view
+        if (Auth::user()->role === 'seller') {
+            return view('seller.products.form', [
+                'categories' => Categories::all(),
+            ]);
+        }
+
         return view('welcome', [
             'page' => 'admin-product-form',
             'categories' => Categories::all(),
-            'sellers' => Auth::user()->role === 'admin' ? Seller::all() : null,
+            'sellers' => Seller::all(),
         ]);
     }
 
@@ -242,9 +264,11 @@ class ProductsController extends Controller
 
         $product = Products::create($productData);
 
-        return redirect()
-            ->route('admin.products.show', $product->id)
-            ->with('success', 'Product created successfully.');
+        $showRoute = Auth::user()->role === 'seller'
+            ? route('seller.products.show', $product->id)
+            : route('admin.products.show', $product->id);
+
+        return redirect($showRoute)->with('success', 'Product created successfully.');
     }
 
     public function edit(Products $products)
@@ -275,13 +299,19 @@ class ProductsController extends Controller
                 );
 
             }
+
+            // Seller gets dedicated seller edit view
+            return view('seller.products.form', [
+                'productDetail' => $products->load('seller.user'),
+                'categories' => Categories::all(),
+            ]);
         }
 
         return view('welcome', [
             'page' => 'admin-product-form',
             'productDetail' => $products->load('seller.user'),
             'categories' => Categories::all(),
-            'sellers' => Auth::user()->role === 'admin' ? Seller::all() : null,
+            'sellers' => Seller::all(),
         ]);
     }
 
@@ -357,9 +387,11 @@ class ProductsController extends Controller
 
         $products->save();
 
-        return redirect()
-            ->route('admin.products.show', $products->id)
-            ->with('success', 'Product updated successfully.');
+        $showRoute = Auth::user()->role === 'seller'
+            ? route('seller.products.show', $products->id)
+            : route('admin.products.show', $products->id);
+
+        return redirect($showRoute)->with('success', 'Product updated successfully.');
     }
 
     private function resolveSellerId(Request $request): ?int
@@ -412,14 +444,8 @@ class ProductsController extends Controller
                 );
             }
 
-            $allProducts = Products::with('seller.user')
-                ->where('seller_id', $seller->id)
-                ->latest()
-                ->paginate(10);
-
-            return view('welcome', [
-                'page' => 'admin-products',
-                'products' => $allProducts,
+            // Seller gets dedicated seller product detail view
+            return view('seller.products.show', [
                 'productDetail' => $products,
             ]);
         }
@@ -473,11 +499,8 @@ class ProductsController extends Controller
             $products->delete();
 
             return redirect()
-                ->route('admin.products.index')
-                ->with(
-                    'success',
-                    'Product deleted successfully.'
-                );
+                ->route('seller.products.index')
+                ->with('success', 'Product deleted successfully.');
         }
 
         // Customer tidak boleh delete
@@ -513,8 +536,10 @@ class ProductsController extends Controller
         $products->image_url = Storage::url($path);
         $products->save();
 
-        return redirect()
-            ->route('admin.products.show', $products->id)
-            ->with('success', 'Product image uploaded successfully.');
+        $showRoute = Auth::user()->role === 'seller'
+            ? route('seller.products.show', $products->id)
+            : route('admin.products.show', $products->id);
+
+        return redirect($showRoute)->with('success', 'Product image uploaded successfully.');
     }
 }

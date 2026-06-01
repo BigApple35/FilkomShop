@@ -15,6 +15,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SellerDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +40,18 @@ Route::middleware('auth')->group(function () {
 
     // Seller routes
     Route::prefix('seller')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [SellerDashboardController::class, 'index'])->name('seller.dashboard');
+
+        // Orders
         Route::get('/orders', [SellerOrderController::class, 'index'])->name('seller.orders.index');
         Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
+
+        // Products (seller-scoped, reuses ProductsController which already gates by role)
+        Route::get('/products', [ProductsController::class, 'index'])->name('seller.products.index');
+        Route::get('/products/create', [ProductsController::class, 'create'])->name('seller.products.create');
+        Route::get('/products/{products}', [ProductsController::class, 'show'])->name('seller.products.show');
+        Route::get('/products/{products}/edit', [ProductsController::class, 'edit'])->name('seller.products.edit');
     });
 
     // Checkout history routes

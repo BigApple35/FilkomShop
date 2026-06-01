@@ -244,13 +244,26 @@
 
                         @auth
                             @if(Auth::user()->role === 'admin' || Auth::id() === $rev->user_id)
-                                <form action="{{ route('reviews.destroy', $rev->id) }}" method="POST" class="absolute top-4 right-4 m-0" onsubmit="return confirm('Delete this review?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 rounded-full bg-red-50 border border-red-100 hover:bg-red-100 text-red-600 hover:text-red-700 flex items-center justify-center transition shadow-sm" title="Delete Review">
-                                        <span class="material-symbols-outlined text-base">delete</span>
-                                    </button>
-                                </form>
+                                <div class="absolute top-4 right-4 flex items-center gap-2">
+                                    @if(Auth::id() === $rev->user_id)
+                                        <button 
+                                            type="button" 
+                                            onclick="editReview({{ $rev->rating }}, '{{ addslashes($rev->comment) }}')"
+                                            class="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 hover:bg-blue-100 text-[#1a73e8] hover:text-[#1557b0] flex items-center justify-center transition shadow-sm" 
+                                            title="Edit Review"
+                                        >
+                                            <span class="material-symbols-outlined text-[15px] font-bold">edit</span>
+                                        </button>
+                                    @endif
+
+                                    <form action="{{ route('reviews.destroy', $rev->id) }}" method="POST" class="m-0" onsubmit="return confirm('Delete this review?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="w-8 h-8 rounded-full bg-red-50 border border-red-100 hover:bg-red-100 text-red-600 hover:text-red-700 flex items-center justify-center transition shadow-sm" title="Delete Review">
+                                            <span class="material-symbols-outlined text-base">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
                             @endif
                         @endauth
                     </div>
@@ -264,11 +277,11 @@
             </div>
 
             <!-- RIGHT: SUBMIT REVIEW FORM -->
-            <div class="bg-slate-50 border border-slate-200 rounded-[1.8rem] p-6 md:p-8 space-y-6 shadow-sm">
+            <div id="reviewFormContainer" class="bg-slate-50 border border-slate-200 rounded-[1.8rem] p-6 md:p-8 space-y-6 shadow-sm">
                 @auth
                     <div>
-                        <h3 class="text-lg font-black text-[#202124] tracking-tight">Share Your Review</h3>
-                        <p class="text-xs text-slate-500 mt-1">Have you purchased or used this product? Leave your rating and comments below.</p>
+                        <h3 id="reviewFormTitle" class="text-lg font-black text-[#202124] tracking-tight">Share Your Review</h3>
+                        <p id="reviewFormDesc" class="text-xs text-slate-500 mt-1">Have you purchased or used this product? Leave your rating and comments below.</p>
                     </div>
 
                     <form action="{{ route('reviews.store', $product->id) }}" method="POST" class="space-y-4 m-0">
@@ -298,13 +311,25 @@
                             ></textarea>
                         </div>
 
-                        <button 
-                            type="submit"
-                            class="w-full inline-flex items-center justify-center rounded-full bg-[#1a73e8] hover:bg-[#1557b0] py-3.5 text-sm font-semibold text-white transition gap-2 shadow-sm"
-                        >
-                            <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
-                            Submit Review
-                        </button>
+                        <div class="flex flex-col gap-2">
+                            <button 
+                                type="submit"
+                                id="submitReviewBtn"
+                                class="w-full inline-flex items-center justify-center rounded-full bg-[#1a73e8] hover:bg-[#1557b0] py-3.5 text-sm font-semibold text-white transition gap-2 shadow-sm"
+                            >
+                                <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
+                                Submit Review
+                            </button>
+                            <button 
+                                type="button"
+                                id="cancelEditBtn"
+                                onclick="cancelReviewEdit()"
+                                class="w-full inline-flex items-center justify-center rounded-full border border-slate-200 bg-white hover:bg-slate-50 py-3 text-sm font-semibold text-slate-700 transition gap-2 shadow-sm hidden"
+                            >
+                                <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+                                Cancel Edit
+                            </button>
+                        </div>
                     </form>
 
                     <script>
@@ -327,6 +352,9 @@
                                         }
                                     });
                                 }
+
+                                // Expose globally
+                                window.updateStars = updateStars;
 
                                 // Initial load
                                 const checkedVal = starContainer.querySelector('input[type="radio"]:checked')?.value || 5;
@@ -358,6 +386,84 @@
                                 });
                             }
                         });
+
+                        let isEditing = false;
+                        
+                        function editReview(rating, comment) {
+                            isEditing = true;
+                            
+                            // Scroll to form
+                            const formElement = document.getElementById('reviewFormContainer');
+                            if (formElement) {
+                                formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                            
+                            // Set title
+                            const titleElement = document.getElementById('reviewFormTitle');
+                            const descElement = document.getElementById('reviewFormDesc');
+                            const submitBtn = document.getElementById('submitReviewBtn');
+                            if (titleElement) titleElement.textContent = 'Edit Your Review';
+                            if (descElement) descElement.textContent = 'Modify your rating or comment details below.';
+                            if (submitBtn) {
+                                submitBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">save</span>Update Review';
+                            }
+                            
+                            // Set rating
+                            const radio = document.querySelector(`#starRatingSelector input[value="${rating}"]`);
+                            if (radio) {
+                                radio.checked = true;
+                                if (window.updateStars) {
+                                    window.updateStars(rating);
+                                }
+                            }
+                            
+                            // Set comment
+                            const commentTextarea = document.getElementById('comment');
+                            if (commentTextarea) {
+                                commentTextarea.value = comment;
+                            }
+                            
+                            // Show cancel button
+                            const cancelBtn = document.getElementById('cancelEditBtn');
+                            if (cancelBtn) {
+                                cancelBtn.classList.remove('hidden');
+                            }
+                        }
+                        
+                        function cancelReviewEdit() {
+                            isEditing = false;
+                            
+                            // Reset title
+                            const titleElement = document.getElementById('reviewFormTitle');
+                            const descElement = document.getElementById('reviewFormDesc');
+                            const submitBtn = document.getElementById('submitReviewBtn');
+                            if (titleElement) titleElement.textContent = 'Share Your Review';
+                            if (descElement) descElement.textContent = 'Have you purchased or used this product? Leave your rating and comments below.';
+                            if (submitBtn) {
+                                submitBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">send</span>Submit Review';
+                            }
+                            
+                            // Reset rating to 5
+                            const radio = document.querySelector('#starRatingSelector input[value="5"]');
+                            if (radio) {
+                                radio.checked = true;
+                                if (window.updateStars) {
+                                    window.updateStars(5);
+                                }
+                            }
+                            
+                            // Reset comment
+                            const commentTextarea = document.getElementById('comment');
+                            if (commentTextarea) {
+                                commentTextarea.value = '';
+                            }
+                            
+                            // Hide cancel button
+                            const cancelBtn = document.getElementById('cancelEditBtn');
+                            if (cancelBtn) {
+                                cancelBtn.classList.add('hidden');
+                            }
+                        }
                     </script>
                 @else
                     <div class="text-center py-6">
