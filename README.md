@@ -1,5 +1,32 @@
-#Filkom Shop Project
+# Filkom Shop Project
+Aplikasi ini merupakan aplikasi berbasis Laravel yang digunakan untuk melakukan jual beli online. Aplikasi ini memiliki fitur Authentikasi 3 Role, Transaksi, Cart, Manajement Product dan Dashboard.
 
+# Feature
+Authentication (Roles : Admin, Customer, Seller)
+- Login
+- Register
+- Logout
+- Edit Profile
+
+Seller
+- CRUD for item
+- Dashboard
+- Incoming Orders
+
+Customer
+- Storefront
+- Shopping Cart
+- Check out & History
+- View Item
+- View Store
+- Bookmark
+- Cancel Order
+
+Admin
+- Manage User
+- Manage Item
+- Manage Categories
+- Dashboard
 
 
 # Laravel Project Setup & Run Guide
