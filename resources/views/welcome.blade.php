@@ -49,117 +49,7 @@
 
     <div class="min-h-screen bg-[#f3f3f3]">
 
-        <nav class="fixed left-0 right-0 top-0 w-full z-50 bg-slate-950 shadow-lg border-b border-slate-800" style="background-color: #1f232b;">
-
-            <div class="max-w-7xl mx-auto px-6">
-
-                <div class="flex justify-between items-center h-16">
-
-                    <div class="flex items-center gap-10">
-
-                        <a
-                            href="/"
-                            class="text-3xl font-extrabold text-white tracking-wide">
-                            FILKOMSHOP
-                        </a>
-
-                        <a
-                            href="{{ route('admin.products.index') }}"
-                            class="text-gray-300 hover:text-white transition">
-                            Product List
-                        </a>
-
-                        @if(Auth::check() && Auth::user()->role === 'admin')
-
-                        <a
-                            href="{{ route('admin.users.index') }}"
-                            class="text-gray-300 hover:text-white transition">
-                            Manage Users
-                        </a>
-
-                        @endif
-
-                    </div>
-
-                    <div class="flex items-center gap-4">
-
-                        <div class="rounded-xl px-3 py-2 shadow-lg">
-
-                            <form
-                                action="{{ route('admin.products.index') }}"
-                                method="GET"
-                                class="flex items-center gap-2">
-
-                                <input
-                                    type="text"
-                                    name="search"
-                                    value="{{ request('search') }}"
-                                    placeholder="Search product..."
-                                    class="bg-white w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-gray">
-
-                                <button
-                                    type="submit"
-                                    class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">
-                                    Search
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                        @if(Auth::check())
-
-                        <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
-
-                            <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-
-                            <div class="text-left">
-
-                                <div class="text-white font-semibold leading-tight">
-                                    {{ Auth::user()->name }}
-                                </div>
-
-                                <div class="text-xs text-gray-300">
-                                    {{ ucfirst(Auth::user()->role) }}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        @endif
-
-                        @auth
-
-                        <div class="rounded-xl px-3 py-2 shadow-lg">
-
-                            <form
-                                action="{{ route('logout') }}"
-                                method="POST">
-
-                                @csrf
-
-                                <button
-                                    type="submit"
-                                    class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">
-                                    Logout
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                        @endauth
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </nav>
+        @include('layouts.navigation')
 
         <div class="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
@@ -214,14 +104,15 @@
 
                                 <label for="product-image-input" class="cursor-pointer block">
                                     @php
-                                    $primaryImage = $productDetail->image_urls[0] ?? $productDetail->image_url;
+                                    $primaryImage = (is_array($productDetail->image_urls) && isset($productDetail->image_urls[0])) ? $productDetail->image_urls[0] : $productDetail->image_url;
                                     @endphp
                                     @if($primaryImage)
                                     <img
                                         src="{{ asset($primaryImage) }}"
                                         alt="{{ $productDetail->name }}"
                                         class="w-full max-h-[1080px] object-cover"
-                                        style="max-width:1920px;" />
+                                        style="max-width:1920px;"
+                                        onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\' style=\'background:%23f1f5f9;\'><rect width=\'100%\' height=\'100%\' fill=\'%23f1f5f9\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'16\' fill=\'%2394a3b8\' text-anchor=\'middle\' dominant-baseline=\'middle\'>No Image Available</text></svg>';" />
                                     @else
                                     <div class="w-full h-[28rem] bg-slate-100 flex items-center justify-center text-slate-400 text-lg">
                                         Product image not available
@@ -420,92 +311,7 @@
 
     <div class="min-h-screen bg-[#f3f3f3]">
 
-        <nav class="fixed left-0 right-0 top-0 w-full z-50 bg-slate-950 shadow-lg border-b border-slate-800" style="background-color: #1f232b;">
-
-            <div class="max-w-7xl mx-auto px-6">
-
-                <div class="flex justify-between items-center h-16">
-
-                    <div class="flex items-center gap-10">
-
-                        <a
-                            href="/"
-                            class="text-3xl font-extrabold text-white tracking-wide">
-                            FILKOMSHOP
-                        </a>
-
-                        <a
-                            href="/products"
-                            class="text-gray-300 hover:text-white transition">
-                            Storefront
-                        </a>
-
-                    </div>
-
-                    <div class="flex items-center gap-4">
-
-                        <form
-                            action="{{ route('admin.products.index') }}"
-                            method="GET"
-                            class="flex items-center gap-2">
-
-                            <input
-                                type="text"
-                                name="search"
-                                value="{{ request('search') }}"
-                                placeholder="Search product..."
-                                class="bg-white w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-gray">
-
-                            <button
-                                type="submit"
-                                class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">
-                                Search
-                            </button>
-
-                        </form>
-
-                        @auth
-                        <a
-                            href="{{ route('cart.index') }}"
-                            class="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium">
-                            View Cart
-                        </a>
-                        @if(Auth::check())
-                        <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-                            <div class="text-left">
-                                <div class="text-white font-semibold leading-tight">
-                                    {{ Auth::user()->name }}
-                                </div>
-                                <div class="text-xs text-gray-300">
-                                    {{ ucfirst(Auth::user()->role) }}
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                        <div class="rounded-xl px-3 py-2 shadow-lg">
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Logout</button>
-                            </form>
-                        </div>
-
-                        @else
-                        <div class="flex gap-2">
-                            <a href="{{ route('login') }}" class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Login</a>
-                            <a href="{{ route('register') }}" class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Register</a>
-                        </div>
-                        @endauth
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </nav>
+        @include('layouts.navigation')
 
         <div class="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
@@ -542,10 +348,12 @@
                             <img
                                 src="{{ asset($product->image_url) }}"
                                 alt="{{ $product->name }}"
-                                class="w-full h-52 object-cover rounded-3xl mb-5 border border-gray-200" />
+                                class="w-full h-52 object-cover rounded-3xl mb-5 border border-gray-200"
+                                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\' style=\'background:%23f8f9fa;\'><rect width=\'100%\' height=\'100%\' fill=\'%23f8f9fa\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'14\' fill=\'%235f6368\' text-anchor=\'middle\' dominant-baseline=\'middle\'>No Image Available</text></svg>';" />
                             @else
-                            <div class="w-full h-52 rounded-3xl border border-dashed border-gray-300 bg-gray-100 mb-5 flex items-center justify-center text-gray-500">
-                                No image available
+                            <div class="w-full h-52 rounded-3xl border border-dashed border-gray-300 bg-gray-100 mb-5 flex flex-col items-center justify-center text-gray-500">
+                                <span class="material-symbols-outlined text-slate-400" style="font-size: 36px; margin-bottom: 4px;">image_not_supported</span>
+                                <span class="small text-slate-400 font-medium" style="font-size: 11px;">No image available</span>
                             </div>
                             @endif
                             <h3 class="text-3xl font-bold text-[#1f232b] break-all">{{ $product->name }}</h3>
@@ -619,77 +427,7 @@
 
     <div class="min-h-screen bg-[#f3f3f3]">
 
-        <nav class="fixed left-0 right-0 top-0 w-full z-50 bg-slate-950 shadow-lg border-b border-slate-800" style="background-color: #1f232b;">
-
-            <div class="max-w-7xl mx-auto px-6">
-
-                <div class="flex justify-between items-center h-16">
-
-                    <div class="flex items-center gap-10">
-
-                        <a
-                            href="/"
-                            class="text-3xl font-extrabold text-white tracking-wide">
-                            FILKOMSHOP
-                        </a>
-
-                        <a
-                            href="{{ route('admin.products.index') }}"
-                            class="text-gray-300 hover:text-white transition">
-                            Product List
-                        </a>
-
-                        <a
-                            href="{{ route('admin.users.index') }}"
-                            class="text-white font-semibold">
-                            Manage Users
-                        </a>
-
-                    </div>
-
-                    <div class="flex items-center gap-4">
-
-                        @if(Auth::check())
-
-                        <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
-
-                            <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-
-                            <div class="text-left">
-
-                                <div class="text-white font-semibold leading-tight">
-                                    {{ Auth::user()->name }}
-                                </div>
-
-                                <div class="text-xs text-gray-300">
-                                    {{ ucfirst(Auth::user()->role) }}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        @endif
-
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-
-                            <button
-                                type="submit"
-                                class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">
-                                Logout
-                            </button>
-                        </form>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </nav>
+        @include('layouts.navigation')
 
         <div class="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
@@ -941,99 +679,7 @@
 
     <div class="min-h-screen bg-[#f3f3f3]">
 
-        <nav class="fixed left-0 right-0 top-0 w-full z-50 bg-slate-950 shadow-lg border-b border-slate-800" style="background-color: #1f232b;">
-
-            <div class="max-w-7xl mx-auto px-6">
-
-                <div class="flex justify-between items-center h-16">
-
-                    <div class="flex items-center gap-10">
-
-                        <a
-                            href="/"
-                            class="text-3xl font-extrabold text-white tracking-wide">
-                            FILKOMSHOP
-                        </a>
-
-                        <a
-                            href="/admin/products"
-                            class="text-gray-300 hover:text-white transition">
-                            Product List
-                        </a>
-
-                        <a
-                            href="{{ route('admin.users.index') }}"
-                            class="text-gray-300 hover:text-white transition">
-                            Manage Users
-                        </a>
-                    </div>
-
-                    <div class="rounded-xl px-3 py-2 shadow-lg">
-
-                        <form
-                            action="{{ route('admin.products.index') }}"
-                            method="GET"
-                            class="flex items-center gap-2">
-
-                            <input
-                                type="text"
-                                name="search"
-                                value="{{ request('search') }}"
-                                placeholder="Search product..."
-                                class="bg-white w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-gray">
-
-                            <button
-                                type="submit"
-                                class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">
-                                Search
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                    @if(Auth::check())
-
-                    <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
-
-                        <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                        </div>
-
-                        <div class="text-left">
-
-                            <div class="text-white font-semibold leading-tight">
-                                {{ Auth::user()->name }}
-                            </div>
-
-                            <div class="text-xs text-gray-300">
-                                {{ ucfirst(Auth::user()->role) }}
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    @endif
-
-                    <div class="flex items-center gap-4">
-
-                        @auth
-                        <div class="rounded-xl px-3 py-2 shadow-lg">
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Logout</button>
-                            </form>
-                        </div>
-                        @endauth
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </nav>
+        @include('layouts.navigation')
 
         <div class="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
@@ -1127,7 +773,7 @@
                             @foreach(array_filter(array_merge([$productDetail->image_url], $productDetail->image_urls ?? [])) as $image)
                             @if($image)
                             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white">
-                                <img src="{{ asset($image) }}" alt="Product photo" class="h-32 w-full object-cover" />
+                                <img src="{{ asset($image) }}" alt="Product photo" class="h-32 w-full object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\' viewBox=\'0 0 150 150\' style=\'background:%23f8f9fa;\'><rect width=\'100%\' height=\'100%\' fill=\'%23f8f9fa\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'10\' fill=\'%235f6368\' text-anchor=\'middle\' dominant-baseline=\'middle\'>No Image</text></svg>';" />
                             </div>
                             @endif
                             @endforeach
@@ -1153,74 +799,7 @@
 
     <div class="min-h-screen bg-[#f3f3f3]">
 
-        <nav class="fixed left-0 right-0 top-0 w-full z-50 bg-slate-950 shadow-lg border-b border-slate-800" style="background-color: #1f232b;">
-
-            <div class="max-w-7xl mx-auto px-6">
-
-                <div class="flex justify-between items-center h-16">
-
-                    <div class="flex items-center gap-10">
-
-                        <a href="/" class="text-3xl font-extrabold text-white tracking-wide">FILKOMSHOP</a>
-                        <a href="/products" class="text-gray-300 hover:text-white transition">Storefront</a>
-
-                    </div>
-
-                    <div class="flex items-center gap-4">
-
-                        @auth
-                        <form
-                            action="{{ route('admin.products.index') }}"
-                            method="GET"
-                            class="flex items-center gap-2">
-                            <input
-                                type="text"
-                                name="search"
-                                value="{{ request('search') }}"
-                                placeholder="Search product..."
-                                class="bg-white w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-gray">
-                            <button
-                                type="submit"
-                                class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">
-                                Search
-                            </button>
-                        </form>
-                        <a href="{{ route('cart.index') }}" class="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium">View Cart</a>
-                        @if(Auth::check())
-                        <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-                            <div class="text-left">
-                                <div class="text-white font-semibold leading-tight">
-                                    {{ Auth::user()->name }}
-                                </div>
-                                <div class="text-xs text-gray-300">
-                                    {{ ucfirst(Auth::user()->role) }}
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                        <div class="rounded-xl px-3 py-2 shadow-lg">
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Logout</button>
-                            </form>
-                        </div>
-                        @else
-                        <div class="flex gap-2">
-                            <a href="{{ route('login') }}" class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Login</a>
-                            <a href="{{ route('register') }}" class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Register</a>
-                        </div>
-                        @endauth
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </nav>
+        @include('layouts.navigation')
 
         <div class="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
@@ -1232,13 +811,14 @@
                 <div class="grid gap-6 xl:grid-cols-[1.5fr_1.05fr]">
                     <div class="rounded-[2rem] overflow-hidden border border-slate-200 bg-slate-50">
                         @php
-                        $primaryImage = $productDetail->image_urls[0] ?? $productDetail->image_url;
+                        $primaryImage = (is_array($productDetail->image_urls) && isset($productDetail->image_urls[0])) ? $productDetail->image_urls[0] : $productDetail->image_url;
                         @endphp
                         @if($primaryImage)
                         <img
                             src="{{ asset($primaryImage) }}"
                             alt="{{ $productDetail->name }}"
-                            class="w-full max-h-[1080px] object-cover" />
+                            class="w-full max-h-[1080px] object-cover"
+                            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\' style=\'background:%23f8f9fa;\'><rect width=\'100%\' height=\'100%\' fill=\'%23f8f9fa\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'16\' fill=\'%235f6368\' text-anchor=\'middle\' dominant-baseline=\'middle\'>No Image Available</text></svg>';" />
                         @else
                         <div class="w-full h-[28rem] bg-slate-100 flex items-center justify-center text-slate-400 text-lg">
                             Product image not available
@@ -1305,112 +885,15 @@
 
     <div class="min-h-screen bg-[#f3f3f3] flex flex-col">
 
-        <nav class="fixed left-0 right-0 top-0 w-full z-50 bg-slate-950 shadow-lg border-b border-slate-800" style="background-color: #1f232b;">
+        @include('layouts.navigation')
 
-            <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-4xl mx-auto px-6 pt-28 pb-16 flex-1">
 
-                <div class="flex justify-between items-center h-16">
-
-                    <div class="flex items-center gap-10">
-
-                        <a
-                            href="/"
-                            class="text-3xl font-extrabold text-white tracking-wide">
-                            FILKOMSHOP
-                        </a>
-
-                        <a
-                            href="/products"
-                            class="text-gray-300 hover:text-white transition">
-                            Storefront
-                        </a>
-
-                        @if(Auth::check() && Auth::user()->role === 'admin')
-
-                        <a
-                            href="{{ route('admin.users.index') }}"
-                            class="text-gray-300 hover:text-white transition">
-                            Manage Users
-                        </a>
-
-                        @endif
-
-                    </div>
-
-                    <div class="flex items-center gap-4">
-
-                        <div class="rounded-xl px-3 py-2 shadow-lg">
-
-                            <form
-                                action="{{ route('products.index') }}"
-                                method="GET"
-                                class="flex items-center gap-2">
-
-                                <input
-                                    type="text"
-                                    name="search"
-                                    value="{{ request('search') }}"
-                                    placeholder="Search product..."
-                                    class="bg-white w-64 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-gray">
-
-                                <button
-                                    type="submit"
-                                    class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">
-                                    Search
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                        @if(Auth::check())
-
-                        <div class="bg-white/10 border border-white/20 px-4 py-2 rounded-xl flex items-center gap-3">
-
-                            <div class="w-10 h-10 rounded-full bg-white text-[#1f232b] flex items-center justify-center font-bold text-lg">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-
-                            <div class="text-left">
-
-                                <div class="text-white font-semibold leading-tight">
-                                    {{ Auth::user()->name }}
-                                </div>
-
-                                <div class="text-xs text-gray-300">
-                                    {{ ucfirst(Auth::user()->role) }}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        @endif
-
-                        <div class="rounded-xl px-3 py-2 shadow-lg">
-
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button class="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg font-medium">Logout</button>
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </nav>
-
-        <div class="max-w-7xl mx-auto px-6 pt-28 pb-10 flex-1">
-
-            <h2 class="text-5xl font-bold text-[#1f232b] mb-6">Your Shopping Cart</h2>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-8 tracking-tight">Your Shopping Cart</h2>
 
             @if(session('success'))
 
-            <div class="bg-green-100 border border-green-300 text-green-700 px-5 py-4 rounded-2xl mb-6">
+            <div class="bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-xl mb-6 text-sm font-medium">
 
                 {{ session('success') }}
 
@@ -1420,7 +903,7 @@
 
             @if(session('error'))
 
-            <div class="bg-red-100 border border-red-300 text-red-700 px-5 py-4 rounded-2xl mb-6">
+            <div class="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl mb-6 text-sm font-medium">
 
                 {{ session('error') }}
 
@@ -1430,41 +913,43 @@
 
             @if(isset($items) && $items->count() > 0)
 
-            <div class="bg-white rounded-2xl shadow-lg p-10 md:p-12 max-w-5xl mx-auto w-full">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8 w-full">
 
                 <div class="space-y-6">
 
                     @foreach($items as $item)
 
-                    <div class="flex flex-col md:flex-row md:items-center justify-between border-b pb-6 gap-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-100 pb-6 gap-4">
 
-                        <div class="flex items-start gap-4">
-                            <div class="w-24 h-24 rounded-3xl overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center">
+                        <div class="flex items-center gap-4">
+                            <div class="w-20 h-20 rounded-2xl overflow-hidden border border-gray-200 bg-gray-55 flex items-center justify-center flex-shrink-0">
                                 @if($item->product->image_url)
-                                <img src="{{ asset($item->product->image_url) }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover" />
+                                <img src="{{ asset($item->product->image_url) }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\' viewBox=\'0 0 150 150\' style=\'background:%23f8f9fa;\'><rect width=\'100%\' height=\'100%\' fill=\'%23f8f9fa\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'11\' fill=\'%235f6368\' text-anchor=\'middle\' dominant-baseline=\'middle\'>No Image</text></svg>';" />
                                 @else
-                                <span class="text-sm text-gray-500">No image</span>
+                                <div class="w-full h-full bg-slate-50 flex flex-col items-center justify-center text-slate-400">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">image_not_supported</span>
+                                </div>
                                 @endif
                             </div>
-                            <div class="space-y-2">
-                                <h3 class="text-2xl font-semibold text-[#1f232b] break-all">{{ $item->product->name }}</h3>
-                                <p class="text-gray-600 break-all">Rp {{ number_format($item->product->price,0,',','.') }}</p>
+                            <div class="space-y-1">
+                                <h3 class="text-base font-semibold text-gray-900 break-all leading-snug">{{ $item->product->name }}</h3>
+                                <p class="text-sm font-semibold text-gray-700 break-all">Rp {{ number_format($item->product->price,0,',','.') }}</p>
                             </div>
                         </div>
 
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
 
                             <form action="{{ route('cart.update', $item->id) }}" method="POST" class="flex items-center gap-2">
                                 @csrf
                                 @method('PATCH')
-                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->product->stock }}" class="w-24 px-3 py-2 border rounded-lg" />
-                                <button class="bg-[#1f232b] text-white px-4 py-2 rounded-lg">Update</button>
+                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->product->stock }}" class="w-16 px-2.5 py-1.5 border border-gray-300 rounded-full text-center text-sm font-medium outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                                <button class="bg-blue-55 hover:bg-blue-100 text-blue-600 border border-blue-200 px-4 py-1.5 rounded-full text-xs font-semibold transition">Update</button>
                             </form>
 
                             <form action="{{ route('cart.destroy', $item->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button onclick="return confirm('Remove this item from cart?')" class="bg-red-500 text-white px-4 py-2 rounded-lg">Remove</button>
+                                <button onclick="return confirm('Remove this item from cart?')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-1.5 rounded-full text-xs font-semibold transition">Remove</button>
                             </form>
 
                         </div>
@@ -1475,21 +960,22 @@
 
                 </div>
 
-                <div class="mt-6 flex justify-end">
+                <div class="mt-8 flex justify-end">
 
-                    <div class="text-right">
+                    <div class="text-right w-full sm:w-auto">
                         @php
                         $total = $items->reduce(function($carry, $i){ return $carry + ($i->product->price * $i->quantity); }, 0);
                         @endphp
-                        <div class="text-2xl font-bold">Total: Rp {{ number_format($total,0,',','.') }}</div>
-                        <div class="mt-4">
+                        <div class="text-sm text-gray-500 font-medium">Subtotal</div>
+                        <div class="text-3xl font-extrabold text-gray-900 mt-1">Rp {{ number_format($total,0,',','.') }}</div>
+                        <div class="mt-6">
                             <form action="{{ route('cart.checkout') }}" method="POST">
 
                                 @csrf
 
                                 <button
                                     type="submit"
-                                    class="w-full bg-yellow-400 hover:bg-yellow-500 text-white py-4 rounded-2xl text-lg font-bold transition">
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-8 rounded-full text-base font-semibold shadow-sm hover:shadow transition">
                                     Proceed To Checkout
                                 </button>
 
@@ -1503,14 +989,15 @@
 
             @else
 
-            <div class="bg-white rounded-2xl shadow-md p-20 text-center max-w-5xl mx-auto w-full">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-16 text-center w-full">
 
-                <h2 class="text-3xl font-bold text-[#1f232b]">Your cart is empty</h2>
+                <span class="material-symbols-outlined text-gray-300" style="font-size: 56px; margin-bottom: 12px;">shopping_cart</span>
+                <h2 class="text-xl font-bold text-gray-900">Your cart is empty</h2>
 
-                <p class="text-gray-500 mt-5">Browse products and add items to your cart.</p>
+                <p class="text-gray-500 mt-2 text-sm">Browse products and add items to your cart.</p>
 
-                <div class="mt-8">
-                    <a href="{{ route('products.index') }}" class="bg-[#1f232b] text-white px-6 py-3 rounded-xl">Browse Products</a>
+                <div class="mt-6">
+                    <a href="{{ route('products.index') }}" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full text-sm font-semibold shadow-sm transition">Browse Products</a>
                 </div>
 
             </div>

@@ -6,7 +6,6 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\SellerOrderController;
 use App\Http\Controllers\CheckoutHistoryController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
@@ -82,9 +81,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| Storefront Routes (Bebas, tanpa middleware auth)
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -110,6 +107,9 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('admin')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
         // Manage Users
         Route::get('/users', [AuthController::class, 'manageUsers'])->name('admin.users.index');
         Route::get('/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
@@ -129,20 +129,19 @@ Route::middleware('auth')->group(function () {
         Route::delete('/products/{products}', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
         Route::post('/products/{products}/image', [ProductsController::class, 'uploadImage'])->name('admin.products.image.upload');
     });
-});
+
 
 /*
 |--------------------------------------------------------------------------
 | Fitur Khusus Seller & Buyer History
 |--------------------------------------------------------------------------
 */
-// Seller Orders
+
 Route::prefix('seller')->group(function () {
     Route::get('/orders', [SellerOrderController::class, 'index'])->name('seller.orders.index');
     Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
 });
 
-// Buyer History
 Route::prefix('history')->group(function () {
     Route::get('/', [CheckoutHistoryController::class, 'index'])->name('history.index');
     Route::get('/{id}', [CheckoutHistoryController::class, 'show'])->name('history.show');
