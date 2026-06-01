@@ -2,59 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Carts;
-use App\Models\Cart_Items;
-use App\Models\Products;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    public function index()
+    public function add($id)
     {
-        $cart = Carts::where('user_id', Auth::id())->first();
+        $product = Product::findOrFail($id);
+        $cart = session()->get('cart', []);
 
-        $items = [];
-
-        if ($cart) {
-            $items = Cart_Items::with('product')
-                ->where('cart_id', $cart->id)
-                ->get();
-        }
-
-        return view('storefront.cart', compact('items'));
-    }
-
-    public function add($productId)
-    {
-        $cart = Carts::firstOrCreate([
-            'user_id' => Auth::id()
-        ]);
-
-        $item = Cart_Items::where('cart_id', $cart->id)
-            ->where('product_id', $productId)
-            ->first();
-
-        if ($item) {
-
-            $item->increment('quantity');
-
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
         } else {
-
-            Cart_Items::create([
-                'cart_id' => $cart->id,
-                'product_id' => $productId,
-                'quantity' => 1
-            ]);
-
+            $cart[$id] = [
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => 1,
+                'seller_id' => $product->seller_id ?? 1
+            ];
         }
 
-        return redirect('/cart');
-    }
-
-    public function delete($id)
-    {
-        Cart_Items::findOrFail($id)->delete();
-
-        return redirect('/cart');
+        session()->put('cart', $cart);
+        return redirect()->route('cart.index')->with('success', 'Product added to cart');
     }
 }
