@@ -13,7 +13,9 @@ class ProductsController extends Controller
 {
     public function index(Request $request)
     {
-        if (Auth::check() && Auth::user()->role === 'admin') {
+        $user = Auth::user();
+
+        if ($user->role === 'admin') {
             $products = Products::with('seller.user')
                 ->when($request->search, function ($query) use ($request) {
                     $query->where(
@@ -32,23 +34,33 @@ class ProductsController extends Controller
             ]);
         }
 
-        $products = Products::with('seller.user')
-            ->where('is_active', true)
-            ->when($request->search, function ($query) use ($request) {
-                $query->where(
-                    'name',
-                    'like',
-                    '%' . $request->search . '%'
-                );
-            })
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        if ($user->role === 'seller') {
+            $seller = $user->seller;
 
-        return view('welcome', [
-            'page' => 'storefront',
-            'products' => $products,
-        ]);
+            if (!$seller) {
+                abort(403, 'Seller account not found.');
+            }
+
+            $products = Products::with('seller.user')
+                ->where('seller_id', $seller->id)
+                ->when($request->search, function ($query) use ($request) {
+                    $query->where(
+                        'name',
+                        'like',
+                        '%' . $request->search . '%'
+                    );
+                })
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+
+            return view('welcome', [
+                'page' => 'seller-products',
+                'products' => $products,
+            ]);
+        }
+
+        abort(403);
     }
 
     public function create()
@@ -266,7 +278,6 @@ class ProductsController extends Controller
 
     public function show(Products $products)
     {
-        // Reload lengkap dengan relasi
         $products = Products::with('seller.user')
             ->findOrFail($products->id);
 
@@ -289,27 +300,12 @@ class ProductsController extends Controller
 
             $seller = Seller::where('user_id', Auth::id())->first();
 
-            if (!$seller || $products->seller_id !== $seller->id) {
-
-                return response()->view(
-                    'welcome',
-                    [
-                        'page' => 'access-denied',
-                    ],
-                    403
-                );
+            if ($seller && $products->seller_id === $seller->id) {
+                return view('welcome', [
+                    'page' => 'seller-product-detail',
+                    'productDetail' => $products,
+                ]);
             }
-
-            $allProducts = Products::with('seller.user')
-                ->where('seller_id', $seller->id)
-                ->latest()
-                ->paginate(10);
-
-            return view('welcome', [
-                'page' => 'admin-products',
-                'products' => $allProducts,
-                'productDetail' => $products,
-            ]);
         }
 
         // CUSTOMER / GUEST

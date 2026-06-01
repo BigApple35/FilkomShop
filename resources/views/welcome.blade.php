@@ -50,7 +50,7 @@
 
         </div>
 
-    @elseif(isset($page) && $page === 'admin-products')
+    @elseif(isset($page) && in_array($page, ['admin-products', 'seller-products']))
 
         <div class="min-h-screen bg-[#f3f3f3]">
 
@@ -183,19 +183,23 @@
                         <div>
 
                             <h2 class="text-5xl font-bold text-[#1f232b]">
-                                Product List
+                                {{ $page === 'seller-products' ? 'My Products' : 'Product List' }}
                             </h2>
 
                             <p class="text-gray-500 text-2xl">
-                                Browse all available products
+                                {{ $page === 'seller-products'
+                                    ? 'Manage your own products'
+                                    : 'Browse all available products' }}
                             </p>
-
                         </div>
 
                         <div>
-                            <a href="{{ route('admin.products.create') }}" class="inline-flex items-center justify-center rounded-full bg-yellow-400 px-5 py-3 text-lg font-semibold text-black hover:bg-yellow-500">
+                            @if($page === 'admin-products' || $page === 'seller-products')
+                            <a href="{{ route('admin.products.create') }}"
+                            class="inline-flex items-center justify-center rounded-full bg-yellow-400 px-5 py-3 text-lg font-semibold text-black hover:bg-yellow-500">
                                 + Create Product
                             </a>
+                            @endif
                         </div>
 
                     </div>
@@ -258,7 +262,7 @@
                                     <div>
                                         <h2 class="text-4xl font-bold text-[#1f232b] break-all">{{ $productDetail->name }}</h2>
                                         <p class="text-sm text-gray-500">
-                                            Seller: {{ $product->seller->user->name ?? 'Unknown Seller' }}
+                                            Seller: {{ $productDetail->seller->user->name ?? 'Unknown Seller' }}
                                         </p>
                                     </div>
 
@@ -341,7 +345,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
 
                                         <a
-                                            href="{{ route('admin.products.show', $product->id) }}"
+                                            href="{{ route('products.show', $product->id) }}"
                                             class="flex-1 bg-gray-100 hover:bg-gray-200 text-black text-center py-3 rounded-full text-2xl font-bold transition"
                                         >
                                             Read
@@ -432,6 +436,82 @@
                 </div>
 
             </footer>
+
+        </div>
+
+    @elseif(isset($page) && $page === 'seller-product-detail')
+
+        <div class="min-h-screen bg-[#f3f3f3]">
+
+            <div class="max-w-7xl mx-auto px-6 pt-28 pb-10">
+
+                <div class="mb-6">
+                    <button
+                        onclick="history.back()"
+                        class="bg-white px-5 py-3 rounded-xl shadow"
+                    >
+                        ← Back
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-[2rem] shadow-xl p-8">
+
+                    <h1 class="text-5xl font-bold mb-4">
+                        {{ $productDetail->name }}
+                    </h1>
+
+                    @if($productDetail->image_url)
+                        <img
+                            src="{{ asset($productDetail->image_url) }}"
+                            class="w-full max-h-[600px] object-cover rounded-3xl mb-6"
+                        >
+                    @endif
+
+                    <p class="text-gray-600 mb-3">
+                        Price:
+                        Rp {{ number_format($productDetail->price,0,',','.') }}
+                    </p>
+
+                    <p class="text-gray-600 mb-3">
+                        Stock:
+                        {{ $productDetail->stock }}
+                    </p>
+
+                    <p class="text-gray-700 mb-8">
+                        {{ $productDetail->description }}
+                    </p>
+
+                    <div class="flex gap-4">
+
+                        <a
+                            href="{{ route('admin.products.edit', $productDetail->id) }}"
+                            class="bg-yellow-400 px-6 py-3 rounded-xl font-bold"
+                        >
+                            Edit Product
+                        </a>
+
+                        <form
+                            action="{{ route('admin.products.destroy', $productDetail->id) }}"
+                            method="POST"
+                        >
+
+                            @csrf
+                            @method('DELETE')
+
+                            <button
+                                onclick="return confirm('Delete this product?')"
+                                class="bg-red-500 text-white px-6 py-3 rounded-xl font-bold"
+                            >
+                                Delete Product
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -1623,21 +1703,30 @@
 
                         @if(Auth::check() && Auth::user()->role === 'admin')
 
-                            <a
-                                href="{{ route('admin.products.index') }}"
-                                class="bg-[#1f232b] hover:bg-[#343a46] text-white px-6 py-3 rounded-xl font-semibold"
-                            >
-                                Open Item Management
-                            </a>
+                        <a
+                            href="{{ route('admin.products.index') }}"
+                            class="bg-[#1f232b] hover:bg-[#343a46] text-white px-6 py-3 rounded-xl font-semibold"
+                        >
+                            Open Item Management
+                        </a>
+
+                        @elseif(Auth::check() && Auth::user()->role === 'seller')
+
+                        <a
+                            href="{{ route('products.index') }}"
+                            class="bg-[#1f232b] hover:bg-[#343a46] text-white px-6 py-3 rounded-xl font-semibold"
+                        >
+                            Open Products
+                        </a>
 
                         @else
 
-                            <a
-                                href="{{ route('products.index') }}"
-                                class="bg-[#1f232b] hover:bg-[#343a46] text-white px-6 py-3 rounded-xl font-semibold"
-                            >
-                                Open Storefront
-                            </a>
+                        <a
+                            href="/"
+                            class="bg-[#1f232b] hover:bg-[#343a46] text-white px-6 py-3 rounded-xl font-semibold"
+                        >
+                            Open Storefront
+                        </a>
 
                         @endif
 
