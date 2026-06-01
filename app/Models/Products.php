@@ -17,7 +17,13 @@ class Products extends Model
         'price',
         'stock',
         'image_url',
-        'is_active'
+        'image_urls',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'image_urls' => 'array',
+        'is_active' => 'boolean',
     ];
 
     public function seller()
