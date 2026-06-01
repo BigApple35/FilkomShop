@@ -91,4 +91,9 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/', [StorefrontController::class, 'index']);
 Route::get('/product/{id}', [StorefrontController::class, 'show']);
-Route::get('/store/{sellerId}', [StorefrontController::class, 'store']);
+Route::get('/cart', function() {
+    return view('cart.index');
+})->name('cart.index');
+
+Route::get('/cart/add/{id}', [App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+Route::post('/checkout', [App\Http\Controllers\CheckoutHistoryController::class, 'store'])->name('checkout.store');
