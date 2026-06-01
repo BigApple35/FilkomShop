@@ -40,6 +40,20 @@
         </a>
     </div>
 
+    @if(session('success'))
+        <div class="bg-emerald-55 border border-emerald-200 text-emerald-800 px-5 py-4 rounded-2xl mb-6 text-sm font-medium flex items-center gap-3 shadow-sm">
+            <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-55 border border-red-200 text-red-800 px-5 py-4 rounded-2xl mb-6 text-sm font-medium flex items-center gap-3 shadow-sm">
+            <span class="material-symbols-outlined text-red-600">error</span>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
     @if(count($items) > 0)
 
         <div class="bg-white rounded-[2rem] border border-slate-200 shadow-xl p-6 md:p-8 space-y-6">
@@ -80,23 +94,40 @@
                     <!-- QUANTITY AND ACTIONS -->
                     <div class="flex items-center justify-between sm:justify-start gap-4">
                         
-                        <div class="text-sm font-semibold text-slate-650 flex items-center gap-1 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
-                            <span class="text-slate-450 uppercase tracking-wider text-xs">Qty:</span>
-                            <span class="text-[#202124] font-black text-sm">{{ $item->quantity }}</span>
-                        </div>
+                        <form action="{{ route('cart.update', $item->id) }}" method="POST" class="flex items-center gap-2 m-0 p-0">
+                            @csrf
+                            @method('PATCH')
+                            <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 px-2 py-1 rounded-full">
+                                <span class="text-slate-400 uppercase tracking-wider text-[10px] font-bold pl-1">Qty:</span>
+                                <input 
+                                    type="number" 
+                                    name="quantity" 
+                                    value="{{ $item->quantity }}" 
+                                    min="1" 
+                                    max="{{ $item->product->stock }}" 
+                                    class="w-12 h-7 bg-transparent border-0 text-center text-sm font-extrabold outline-none focus:ring-0 p-0 text-[#202124]"
+                                />
+                                <button type="submit" class="w-7 h-7 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white flex items-center justify-center transition shadow-sm">
+                                    <span class="material-symbols-outlined text-sm font-bold">done</span>
+                                </button>
+                            </div>
+                        </form>
 
                         <div class="text-base font-extrabold text-[#202124] min-w-[100px] text-right">
                             Rp {{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}
                         </div>
 
                         <!-- DELETE ACTIONS -->
-                        <a 
-                            href="/cart/delete/{{ $item->id }}"
-                            onclick="return confirm('Remove this item from your cart?')"
-                            class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-50 hover:bg-red-100 border border-red-100 text-red-600 hover:text-red-700 transition"
-                        >
-                            <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
-                        </a>
+                        <form action="{{ route('cart.destroy', $item->id) }}" method="POST" class="m-0 p-0" onsubmit="return confirm('Remove this item from your cart?')">
+                            @csrf
+                            @method('DELETE')
+                            <button 
+                                type="submit"
+                                class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-50 hover:bg-red-100 border border-red-100 text-red-600 hover:text-red-700 transition"
+                            >
+                                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                            </button>
+                        </form>
 
                     </div>
 
@@ -118,21 +149,33 @@
                         Rp {{ number_format($total, 0, ',', '.') }}
                     </div>
                     
-                    <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-end">
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-end items-end">
                         <a 
                             href="/" 
-                            class="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white hover:bg-slate-50 px-6 py-3.5 text-base font-semibold text-slate-700 transition gap-2 shadow-sm"
+                            class="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white hover:bg-slate-50 px-6 py-3.5 text-base font-semibold text-slate-700 transition gap-2 shadow-sm h-[52px]"
                         >
                             <span class="material-symbols-outlined" style="font-size: 20px;">storefront</span>
                             Add More Items
                         </a>
                         
                         <!-- Form checkout pointing to index/route of choice -->
-                        <form action="{{ route('cart.checkout') }}" method="POST" class="m-0 p-0">
+                        <form action="{{ route('cart.checkout') }}" method="POST" class="m-0 p-0 flex flex-col sm:flex-row gap-3 items-end w-full sm:w-auto">
                             @csrf
+                            <div class="text-left flex flex-col w-full sm:w-auto">
+                                <label for="shipping_address" class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Shipping Address</label>
+                                <textarea 
+                                    name="shipping_address" 
+                                    id="shipping_address" 
+                                    rows="1" 
+                                    required
+                                    placeholder="Enter address details..."
+                                    class="w-full sm:w-[280px] px-4 py-3 text-sm border border-slate-200 rounded-2xl outline-none focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] bg-slate-50 transition resize-none h-[52px] box-border"
+                                >Jl. Veteran No. 8, Lowokwaru, Malang, Jawa Timur</textarea>
+                            </div>
+                            
                             <button 
                                 type="submit"
-                                class="inline-flex w-full sm:w-auto items-center justify-center rounded-full bg-[#1a73e8] hover:bg-[#1557b0] px-8 py-3.5 text-base font-semibold text-white transition gap-2 shadow-sm"
+                                class="inline-flex w-full sm:w-auto items-center justify-center rounded-full bg-[#1a73e8] hover:bg-[#1557b0] px-8 py-3.5 text-base font-semibold text-white transition gap-2 shadow-sm h-[52px] mt-3 sm:mt-0"
                             >
                                 <span class="material-symbols-outlined" style="font-size: 20px;">shopping_bag</span>
                                 Proceed to Checkout

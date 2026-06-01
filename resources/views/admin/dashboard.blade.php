@@ -711,6 +711,11 @@
                 <span>Manage Products</span>
             </a>
             
+            <a href="{{ route('admin.categories.index') }}" class="nav-item">
+                <span class="material-symbols-outlined">category</span>
+                <span>Manage Categories</span>
+            </a>
+
             <a href="{{ route('admin.users.index') }}" class="nav-item">
                 <span class="material-symbols-outlined">group</span>
                 <span>Manage Users</span>

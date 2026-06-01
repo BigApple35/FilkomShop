@@ -9,16 +9,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class CartController extends Controller
+class CartsController extends Controller
 {
     public function index()
     {
-        $cart = session()->get('cart', []);
-        $total = 0;
-        foreach ($cart as $item) {
-            $total += $item['price'] * $item['quantity'];
-        }
-        return view('cart.index', compact('cart', 'total'));
         $user = Auth::user();
 
         if (!$user) {
@@ -31,11 +25,7 @@ class CartController extends Controller
 
         $items = $cart->items()->with('product')->get();
 
-        return view('welcome', [
-            'page' => 'cart',
-            'cart' => $cart,
-            'items' => $items,
-        ]);
+        return view('storefront.cart', compact('cart', 'items'));
     }
 
     public function add($id)
@@ -56,9 +46,6 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
         return redirect()->route('cart.index')->with('success', 'Produk ditambahkan ke keranjang');
-    }
-}
-        // Not used — cart is managed via store/update/destroy
     }
 
     /**

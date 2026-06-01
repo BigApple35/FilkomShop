@@ -163,6 +163,221 @@
 
     </div>
 
+    <!-- REVIEWS SECTION -->
+    <div class="mt-8 bg-white rounded-[2rem] border border-slate-200 shadow-xl p-6 md:p-10 space-y-8">
+        @if(session('success'))
+            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-5 py-4 rounded-2xl mb-6 text-sm font-medium flex items-center gap-3 shadow-sm">
+                <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @php
+            $reviews = $product->reviews()->latest()->get();
+            $reviewsCount = $reviews->count();
+            $avgRating = $reviewsCount > 0 ? round($reviews->avg('rating'), 1) : 0;
+            $fullStars = floor($avgRating);
+            $hasHalfStar = ($avgRating - $fullStars) >= 0.5;
+            $emptyStars = 5 - $fullStars - ($hasHalfStar ? 1 : 0);
+        @endphp
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-100 pb-6 gap-4">
+            <div>
+                <h2 class="text-3xl font-extrabold text-[#202124] tracking-tight flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#1a73e8]" style="font-size: 32px;">rate_review</span>
+                    Product Reviews & Ratings
+                </h2>
+                <p class="text-slate-500 text-sm mt-1">What our customers say about this product</p>
+            </div>
+            
+            <div class="flex items-center gap-4 bg-slate-50 border border-slate-200 px-5 py-3 rounded-3xl shadow-sm">
+                <div class="text-center pr-4 border-r border-slate-200">
+                    <div class="text-3xl font-black text-[#202124]">{{ $avgRating > 0 ? $avgRating : 'N/A' }}</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Average</div>
+                </div>
+                <div>
+                    <div class="flex items-center text-amber-500 gap-0.5">
+                        @for($i = 0; $i < $fullStars; $i++)
+                            <span class="material-symbols-outlined fill-current" style="font-variation-settings: 'FILL' 1; font-size: 20px;">star</span>
+                        @endfor
+                        @if($hasHalfStar)
+                            <span class="material-symbols-outlined fill-current" style="font-variation-settings: 'FILL' 1; font-size: 20px;">star_half</span>
+                        @endif
+                        @for($i = 0; $i < $emptyStars; $i++)
+                            <span class="material-symbols-outlined" style="font-size: 20px;">star</span>
+                        @endfor
+                    </div>
+                    <div class="text-xs font-semibold text-slate-650 mt-1">{{ $reviewsCount }} {{ Str::plural('review', $reviewsCount) }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-[1.5fr_1fr] items-start pt-4">
+            <!-- LEFT: REVIEWS LIST -->
+            <div class="space-y-6">
+                @forelse($reviews as $rev)
+                    <div class="bg-slate-50/50 border border-slate-150 rounded-[1.8rem] p-6 space-y-4 hover:border-slate-350 transition shadow-sm relative">
+                        <div class="flex items-center justify-between pr-8">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-[#1a73e8] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                                    {{ strtoupper(substr($rev->user->name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-[#202124] text-sm">{{ $rev->user->name }}</h4>
+                                    <div class="text-[10px] text-slate-400 font-semibold mt-0.5">
+                                        {{ $rev->created_at->format('d M Y, H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-0.5 text-amber-500 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full">
+                                <span class="material-symbols-outlined fill-current text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                                <span class="text-xs font-bold text-amber-700">{{ $rev->rating }}</span>
+                            </div>
+                        </div>
+                        
+                        @if($rev->comment)
+                            <p class="text-sm text-slate-700 leading-relaxed break-all font-medium whitespace-pre-line pl-1">{{ $rev->comment }}</p>
+                        @else
+                            <p class="text-sm text-slate-400 italic pl-1">No comment written.</p>
+                        @endif
+
+                        @auth
+                            @if(Auth::user()->role === 'admin' || Auth::id() === $rev->user_id)
+                                <form action="{{ route('reviews.destroy', $rev->id) }}" method="POST" class="absolute top-4 right-4 m-0" onsubmit="return confirm('Delete this review?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-8 h-8 rounded-full bg-red-50 border border-red-100 hover:bg-red-100 text-red-600 hover:text-red-700 flex items-center justify-center transition shadow-sm" title="Delete Review">
+                                        <span class="material-symbols-outlined text-base">delete</span>
+                                    </button>
+                                </form>
+                            @endif
+                        @endauth
+                    </div>
+                @empty
+                    <div class="text-center py-12 text-slate-400 border-2 border-dashed border-slate-200 rounded-[1.8rem] bg-slate-50/20">
+                        <span class="material-symbols-outlined text-slate-300 mb-2" style="font-size: 48px;">rate_review</span>
+                        <div class="text-base font-bold text-slate-800">No reviews yet</div>
+                        <div class="text-sm mt-1">Be the first to share your experience with this item!</div>
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- RIGHT: SUBMIT REVIEW FORM -->
+            <div class="bg-slate-50 border border-slate-200 rounded-[1.8rem] p-6 md:p-8 space-y-6 shadow-sm">
+                @auth
+                    <div>
+                        <h3 class="text-lg font-black text-[#202124] tracking-tight">Share Your Review</h3>
+                        <p class="text-xs text-slate-500 mt-1">Have you purchased or used this product? Leave your rating and comments below.</p>
+                    </div>
+
+                    <form action="{{ route('reviews.store', $product->id) }}" method="POST" class="space-y-4 m-0">
+                        @csrf
+                        
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Your Rating</label>
+                            <!-- Star Selection Input -->
+                            <div class="flex items-center gap-2" id="starRatingSelector">
+                                @for($val = 1; $val <= 5; $val++)
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="rating" value="{{ $val }}" class="hidden" {{ $val == 5 ? 'checked' : '' }} />
+                                        <span class="material-symbols-outlined star-icon text-slate-300 hover:text-amber-400 transition" style="font-size: 32px;" data-value="{{ $val }}">star</span>
+                                    </label>
+                                @endfor
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="comment" class="block text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Your Comment <span class="text-slate-400 font-normal">(Optional)</span></label>
+                            <textarea 
+                                name="comment" 
+                                id="comment" 
+                                rows="4" 
+                                placeholder="What did you like or dislike? How is the quality of the product?"
+                                class="w-full p-4 text-sm border border-slate-200 rounded-2xl outline-none focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] bg-white transition resize-none box-border"
+                            ></textarea>
+                        </div>
+
+                        <button 
+                            type="submit"
+                            class="w-full inline-flex items-center justify-center rounded-full bg-[#1a73e8] hover:bg-[#1557b0] py-3.5 text-sm font-semibold text-white transition gap-2 shadow-sm"
+                        >
+                            <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
+                            Submit Review
+                        </button>
+                    </form>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const starContainer = document.getElementById('starRatingSelector');
+                            if (starContainer) {
+                                const radios = starContainer.querySelectorAll('input[type="radio"]');
+                                const stars = starContainer.querySelectorAll('.star-icon');
+                                
+                                function updateStars(rating) {
+                                    stars.forEach((star, index) => {
+                                        if (index < rating) {
+                                            star.classList.remove('text-slate-300');
+                                            star.classList.add('text-amber-500', 'fill-current');
+                                            star.style.fontVariationSettings = "'FILL' 1";
+                                        } else {
+                                            star.classList.remove('text-amber-500', 'fill-current');
+                                            star.classList.add('text-slate-300');
+                                            star.style.fontVariationSettings = "'FILL' 0";
+                                        }
+                                    });
+                                }
+
+                                // Initial load
+                                const checkedVal = starContainer.querySelector('input[type="radio"]:checked')?.value || 5;
+                                updateStars(checkedVal);
+
+                                stars.forEach(star => {
+                                    star.addEventListener('click', (e) => {
+                                        const val = parseInt(e.target.getAttribute('data-value'));
+                                        const radio = starContainer.querySelector(`input[value="${val}"]`);
+                                        if (radio) {
+                                            radio.checked = true;
+                                            updateStars(val);
+                                        }
+                                    });
+
+                                    star.addEventListener('mouseover', (e) => {
+                                        const val = parseInt(e.target.getAttribute('data-value'));
+                                        stars.forEach((s, index) => {
+                                            if (index < val) {
+                                                s.classList.add('text-amber-400');
+                                            }
+                                        });
+                                    });
+
+                                    star.addEventListener('mouseout', () => {
+                                        const currentVal = starContainer.querySelector('input[type="radio"]:checked')?.value || 0;
+                                        updateStars(currentVal);
+                                    });
+                                });
+                            }
+                        });
+                    </script>
+                @else
+                    <div class="text-center py-6">
+                        <span class="material-symbols-outlined text-slate-350" style="font-size: 48px; margin-bottom: 8px;">lock</span>
+                        <h3 class="text-base font-bold text-slate-800">Login to leave a review</h3>
+                        <p class="text-xs text-slate-500 mt-2">Only registered and logged-in customers can submit reviews for this product.</p>
+                        <div class="mt-4">
+                            <a 
+                                href="{{ route('login') }}" 
+                                class="inline-flex w-full items-center justify-center rounded-full bg-[#1a73e8] hover:bg-[#1557b0] py-2.5 text-sm font-semibold text-white transition shadow-sm"
+                            >
+                                Login Now
+                            </a>
+                        </div>
+                    </div>
+                @endauth
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- FOOTER -->
