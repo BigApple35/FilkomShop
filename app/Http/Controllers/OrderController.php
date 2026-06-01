@@ -11,11 +11,14 @@ class OrderController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $orders = Order::all(); 
-        
-        return view('orders.index', compact('orders'));
-    }
+{
+    $orders = Order::all();
+
+    return view(
+        'orders.index',
+        compact('orders')
+    );
+}
 
     /**
      * Show the form for creating a new resource.

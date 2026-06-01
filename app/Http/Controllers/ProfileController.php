@@ -3,44 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    /**
+     * Display profile page.
+     *
+     * @return \Illuminate\View\View
+     */
     public function edit()
     {
         return view('profile.index', [
-            'user' => auth()->user()
+            'user' => auth()->user(),
         ]);
     }
 
+    /**
+     * Update user profile.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request)
     {
-       {
-    $request->validate([
-        'name' => 'required|min:3',
-        'email' => 'required|email',
-        'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+        $request->validate([
+            'name' => ['required', 'string', 'min:3'],
+            'email' => ['required', 'string', 'email'],
+        ]);
 
-    $user = auth()->user();
+        $user = auth()->user();
 
-    if ($request->hasFile('profile_photo')) {
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
 
-        $photo = $request->file('profile_photo')
-            ->store('profile_photos', 'public');
-
-        $user->profile_photo = $photo;
+        return redirect()
+            ->back()
+            ->with('success', 'Profile berhasil diupdate');
     }
-
-    $user->name = $request->name;
-    $user->email = $request->email;
-
-    $user->save();
-
-    return redirect()->back()
-        ->with('success', 'Profile berhasil diupdate');
- 
-    }
-}
 }

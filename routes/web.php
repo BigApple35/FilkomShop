@@ -13,6 +13,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductManagementController;
 use App\Http\Controllers\ItemController; // ← TAMBAHAN UNTUK ITEM MANAGEMENT
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductsController;
+
 use App\Http\Controllers\AdminUserController;
 
 /*
@@ -137,6 +139,18 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+    /*
+    |--------------------------------------------------------------------------
+    | Profile & Incoming Orders
+    |--------------------------------------------------------------------------
+    */
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::put('/orders/{order}', [OrderController::class, 'update']) ->name('orders.update');
+    Route::get('/orders', [OrderController::class, 'index']) ->name('orders.index');
 /*
 |--------------------------------------------------------------------------
 | Fitur Khusus Seller & Buyer History
@@ -153,6 +167,30 @@ Route::prefix('history')->group(function () {
     Route::get('/', [CheckoutHistoryController::class, 'index'])->name('history.index');
     Route::get('/{id}', [CheckoutHistoryController::class, 'show'])->name('history.show');
     Route::delete('/{id}', [CheckoutHistoryController::class, 'destroy'])->name('history.destroy');
+});
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin - Manage Items
+    |--------------------------------------------------------------------------
+    */
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/products', [ProductsController::class, 'index'])
+        ->name('products.index');
+
+    Route::get('/products/create', [ProductsController::class, 'create'])
+        ->name('products.create');
+
+    Route::post('/products/store', [ProductsController::class, 'store'])
+        ->name('products.store');
+
+    Route::get('/products/{product}/edit', [ProductsController::class, 'edit'])
+        ->name('products.edit');
+
+    Route::put('/products/{product}', [ProductsController::class, 'update'])
+        ->name('products.update');
+
 });
 
 /*
