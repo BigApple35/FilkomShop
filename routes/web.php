@@ -6,15 +6,13 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CartsController;
 use App\Http\Controllers\SellerOrderController;
 use App\Http\Controllers\CheckoutHistoryController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductManagementController;
 use App\Http\Controllers\ItemController; // ← TAMBAHAN UNTUK ITEM MANAGEMENT
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProductsController;
-
+use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\AdminUserController;
 
 /*
@@ -81,6 +79,12 @@ Route::middleware('auth')->group(function () {
     // Orders (mungkin milik user biasa, bukan seller)
     Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+    // Categories 
+    Route::get('/categories',[CategoriesController::class, 'index'] )->name('categories.index');
+    Route::get('/categories/{category}',[CategoriesController::class, 'show'])->name('categories.show');
+    Route::delete('/categories/{category}',[CategoriesController::class, 'destroy'])->name('categories.destroy');
+
 });
 
 
@@ -131,7 +135,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/products/{products}', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
         Route::post('/products/{products}/image', [ProductsController::class, 'uploadImage'])->name('admin.products.image.upload');
     });
-});
 
     /*
     |--------------------------------------------------------------------------
@@ -199,3 +202,4 @@ Route::get('/store/{sellerId}', [StorefrontController::class, 'store']);
 
 Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
 Route::get('/products/{products}', [ProductsController::class, 'show'])->name('products.show');
+});

@@ -10,10 +10,16 @@ class CategoriesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+   public function index()
+{
+    $categories = Categories::all();
+
+    return view(
+        'admin.categories.index',
+        compact('categories')
+    );
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -34,9 +40,12 @@ class CategoriesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Categories $categories)
+    public function show(Categories $category)
     {
-        //
+        return view(
+            'admin.categories.show',
+            compact('category')
+        );
     }
 
     /**
@@ -58,8 +67,15 @@ class CategoriesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Categories $categories)
+    public function destroy(Categories $category)
     {
-        //
+        $category->delete();
+
+        return redirect()
+            ->route('categories.index')
+            ->with(
+                'success',
+                'Category deleted successfully.'
+            );
     }
 }
