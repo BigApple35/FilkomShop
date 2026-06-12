@@ -1,58 +1,208 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Filkom Shop Project
+Aplikasi ini merupakan aplikasi berbasis Laravel yang digunakan untuk melakukan jual beli online. Aplikasi ini memiliki fitur Authentikasi 3 Role, Transaksi, Cart, Manajement Product dan Dashboard.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Feature
+Authentication (Roles : Admin, Customer, Seller)
+- Login
+- Register
+- Logout
+- Edit Profile
 
-## About Laravel
+Seller
+- CRUD for item
+- Dashboard
+- Incoming Orders
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Customer
+- Storefront
+- Shopping Cart
+- Check out & History
+- View Item
+- View Store
+- Bookmark
+- Cancel Order
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Admin
+- Manage User
+- Manage Item
+- Manage Categories
+- Dashboard
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+# Laravel Project Setup & Run Guide
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Prerequisites
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Make sure the following are installed on your machine:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+* PHP 8.1 or higher
+* Composer
+* MySQL / MariaDB
+* Node.js and NPM (for frontend assets)
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Check versions:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+php -v
+composer -V
+node -v
+npm -v
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## 1. Clone the Project
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+git clone <repository-url>
+cd <project-folder>
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 2. Install PHP Dependencies
 
-## Security Vulnerabilities
+```bash
+composer install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 3. Create Environment File
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+For Windows:
+
+```bash
+copy .env.example .env
+```
+
+---
+
+## 4. Configure Database
+
+Open `.env` and update the database settings:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Create the database in MySQL before continuing.
+
+---
+
+## 5. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+## 6. Run Database Migrations
+
+```bash
+php artisan migrate
+```
+
+---
+
+## 7. Seed Initial Data (Optional)
+
+```bash
+php artisan db:seed
+```
+
+Or run a specific seeder:
+
+```bash
+php artisan db:seed --class=UserSeeder
+```
+
+---
+
+## 8. Install Frontend Dependencies
+
+```bash
+npm install
+```
+
+---
+
+## 9. Build Frontend Assets
+
+Development:
+
+```bash
+npm run dev
+```
+
+Production:
+
+```bash
+npm run build
+```
+
+---
+
+## 10. Start the Laravel Development Server
+
+```bash
+php artisan serve
+```
+
+The application will be available at:
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## Useful Commands
+
+### Clear Cache
+
+```bash
+php artisan optimize:clear
+```
+
+### Refresh Database
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+### View Routes
+
+```bash
+php artisan route:list
+```
+
+### Check Application Status
+
+```bash
+php artisan about
+```
+
+---
+
+## Default User Accounts
+
+| Role     | Email                                               | Password |
+| -------- | --------------------------------------------------- | -------- |
+| Admin    | [admin@example.com](mailto:admin@example.com)       | password |
+| Seller   | [seller@example.com](mailto:seller@example.com)     | password |
+| Customer | [customer@example.com](mailto:customer@example.com) | password |
+
+> Change default passwords before deploying to production.

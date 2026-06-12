@@ -10,44 +10,117 @@
     <style>
 
         body {
-            background-color: #f5f5f5;
-        }
-
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 24px;
+            background-color: #f8f9fa;
         }
 
         .hero-section {
-            background: linear-gradient(135deg, #212529, #343a40);
-            color: white;
-            padding: 60px;
-            border-radius: 20px;
+            background: #e8f0fe !important;
+            color: #1967d2 !important;
+            padding: 48px !important;
+            border-radius: 24px !important;
+        }
+
+        .hero-section p {
+            color: #3c4043 !important;
+            font-weight: 500;
         }
 
         .product-card {
-            border: none;
-            border-radius: 15px;
+            border: 1px solid #dadce0 !important;
+            border-radius: 16px !important;
             overflow: hidden;
-            transition: 0.3s;
+            background-color: #ffffff;
+            transition: transform 0.25s, box-shadow 0.25s;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(60,64,67,0.08) !important;
         }
 
         .product-image {
-            height: 220px;
+            height: 200px;
             object-fit: cover;
+            border-bottom: 1px solid #dadce0;
         }
 
         .price {
-            font-weight: bold;
-            font-size: 20px;
+            font-weight: 800;
+            font-size: 18px;
+            color: #202124 !important;
         }
 
         .stock-badge {
-            font-size: 12px;
+            align-self: flex-start;
+            font-size: 11px;
+            font-weight: 700;
+            background-color: #e6f4ea !important;
+            color: #137333 !important;
+            padding: 4px 10px;
+            border-radius: 100px;
+            border: 1px solid #34a853;
+        }
+
+        .btn-google-solid {
+            background-color: #1a73e8 !important;
+            border-color: #1a73e8 !important;
+            color: #ffffff !important;
+            border-radius: 100px !important;
+            font-weight: 600;
+            padding: 8px 16px;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-google-solid:hover {
+            background-color: #1557b0 !important;
+            color: #ffffff !important;
+        }
+
+        .btn-google-outline-primary {
+            background-color: #ffffff !important;
+            border: 1px solid #dadce0 !important;
+            color: #1a73e8 !important;
+            border-radius: 100px !important;
+            font-weight: 600;
+            padding: 8px 16px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-google-outline-primary:hover {
+            background-color: #f8f9fa !important;
+            border-color: #1a73e8 !important;
+            color: #1a73e8 !important;
+        }
+
+        .btn-google-outline-secondary {
+            background-color: #ffffff !important;
+            border: 1px solid #dadce0 !important;
+            color: #5f6368 !important;
+            border-radius: 100px !important;
+            font-weight: 600;
+            padding: 8px 16px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-google-outline-secondary:hover {
+            background-color: #f1f3f4 !important;
+            color: #202124 !important;
+        }
+
+        .main-store-container {
+            margin-top: 80px;
         }
 
     </style>
@@ -56,103 +129,11 @@
 
 <!-- NAVBAR -->
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-
-    <div class="container">
-
-        <a class="navbar-brand" href="/">
-            FILKOMSHOP
-        </a>
-
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-
-            <ul class="navbar-nav me-auto ms-4">
-
-                <li class="nav-item">
-
-                    <a class="nav-link active" href="/">
-                        Home
-                    </a>
-
-                </li>
-
-            </ul>
-
-            <!-- SEARCH -->
-
-            <form action="/" method="GET" class="d-flex me-3">
-
-                <input
-                    type="text"
-                    name="search"
-                    class="form-control me-2"
-                    placeholder="Search product..."
-                    value="{{ request('search') }}"
-                >
-
-                <button class="btn btn-light">
-                    Search
-                </button>
-
-            </form>
-
-            <!-- AUTH -->
-
-            @guest
-
-                <a href="/login" class="btn btn-outline-light me-2">
-                    Login
-                </a>
-
-                <a href="/register" class="btn btn-warning">
-                    Register
-                </a>
-
-            @endguest
-
-
-            @auth
-
-                <a href="/cart" class="btn btn-warning me-3">
-                    Cart
-                </a>
-
-                <span class="text-white me-3">
-
-                    Hi, {{ auth()->user()->name }}
-
-                </span>
-
-                <form action="/logout" method="POST">
-
-                    @csrf
-
-                    <button class="btn btn-danger">
-                        Logout
-                    </button>
-
-                </form>
-
-            @endauth
-
-        </div>
-
-    </div>
-
-</nav>
+@include('layouts.navigation')
 
 <!-- CONTENT -->
 
-<div class="container py-5">
+<div class="container py-5 main-store-container">
 
     <!-- HERO -->
 
@@ -192,19 +173,27 @@
 
                 <div class="card product-card shadow-sm h-100">
 
+                    @if($product->image_url)
                     <img
-                        src="{{ $product->image_url ?? 'https://via.placeholder.com/300x200' }}"
+                        src="{{ asset($product->image_url) }}"
                         class="card-img-top product-image"
-                        alt="Product Image"
+                        alt="{{ $product->name }}"
+                        onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\' style=\'background:%23f8f9fa;\'><rect width=\'100%\' height=\'100%\' fill=\'%23f8f9fa\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'14\' fill=\'%235f6368\' text-anchor=\'middle\' dominant-baseline=\'middle\'>No Image Available</text></svg>';"
                     >
+                    @else
+                    <div class="w-full product-image border-bottom border-gray-100 d-flex flex-column align-items-center justify-content-center text-secondary bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                        <span class="material-symbols-outlined text-muted" style="font-size: 36px; margin-bottom: 4px;">image_not_supported</span>
+                        <span class="small text-muted font-medium" style="font-size: 11px;">No image available</span>
+                    </div>
+                    @endif
 
                     <div class="card-body d-flex flex-column">
 
-                        <h5 class="fw-bold">
+                        <h5 class="fw-bold text-gray-900" style="font-size: 15px; font-weight: 700; color: #202124; margin-bottom: 8px;">
                             {{ $product->name }}
                         </h5>
 
-                        <p class="text-muted small mb-2">
+                        <p class="text-muted small mb-2" style="font-size: 13px; color: #5f6368; line-height: 1.4;">
 
                             {{ Str::limit($product->description, 60) }}
 
@@ -228,7 +217,7 @@
 
                             <a
                                 href="/product/{{ $product->id }}"
-                                class="btn btn-dark w-100 mb-2"
+                                class="btn btn-google-solid w-100 mb-2"
                             >
                                 View Item
                             </a>
@@ -239,7 +228,7 @@
 
                                 <a
                                     href="/cart/add/{{ $product->id }}"
-                                    class="btn btn-warning w-100 mb-2"
+                                    class="btn btn-google-outline-primary w-100 mb-2"
                                 >
                                     Add to Cart
                                 </a>
@@ -250,7 +239,7 @@
 
                             <a
                                 href="/store/{{ $product->seller_id }}"
-                                class="btn btn-outline-secondary w-100"
+                                class="btn btn-google-outline-secondary w-100"
                             >
                                 Visit Store
                             </a>

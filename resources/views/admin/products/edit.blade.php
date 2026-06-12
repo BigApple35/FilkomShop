@@ -134,10 +134,11 @@
                         <div>
 
                             <img
-                                src="{{ $product->image_url }}"
+                                src="{{ asset($product->image_url) }}"
                                 alt="Product Image"
                                 class="img-fluid rounded"
                                 style="max-width: 250px;"
+                                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\' style=\'background:%23f8f9fa;\'><rect width=\'100%\' height=\'100%\' fill=\'%23f8f9fa\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'14\' fill=\'%235f6368\' text-anchor=\'middle\' dominant-baseline=\'middle\'>No Image Available</text></svg>';"
                             >
 
                         </div>

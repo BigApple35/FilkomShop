@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class CartsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $user = Auth::user();
@@ -28,19 +25,27 @@ class CartsController extends Controller
 
         $items = $cart->items()->with('product')->get();
 
-        return view('welcome', [
-            'page' => 'cart',
-            'cart' => $cart,
-            'items' => $items,
-        ]);
+        return view('storefront.cart', compact('cart', 'items'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function add($id)
     {
-        // Not used — cart is managed via store/update/destroy
+        $product = Products::findOrFail($id);   // <-- perhatikan huruf S
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+        } else {
+            $cart[$id] = [
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => 1,
+                'seller_id' => $product->seller_id ?? 1
+            ];
+        }
+
+        session()->put('cart', $cart);
+        return redirect()->route('cart.index')->with('success', 'Produk ditambahkan ke keranjang');
     }
 
     /**
@@ -108,8 +113,12 @@ class CartsController extends Controller
 
         $messages = [];
         $processed = false;
+        $order = null;
 
-        DB::transaction(function () use ($items, $cart, &$messages, &$processed) {
+        DB::transaction(function () use ($items, $cart, $user, &$messages, &$processed, &$order) {
+            $validItems = [];
+            $totalAmount = 0;
+
             foreach ($items as $item) {
                 $product = $item->product;
                 $productName = $product?->name ?? 'Unknown product';
@@ -127,14 +136,53 @@ class CartsController extends Controller
                 }
 
                 $purchaseQty = min($item->quantity, $product->stock);
-                $product->stock -= $purchaseQty;
-                $product->save();
-                $item->delete();
-                $processed = true;
+                $validItems[] = [
+                    'item' => $item,
+                    'product' => $product,
+                    'quantity' => $purchaseQty,
+                    'unit_price' => $product->price
+                ];
 
-                if ($purchaseQty < $item->quantity) {
-                    $messages[] = "Product '{$product->name}' quantity reduced to {$purchaseQty} due to available stock.";
+                $totalAmount += $product->price * $purchaseQty;
+            }
+
+            if (count($validItems) > 0) {
+                // Create the Order
+                $order = \App\Models\Order::create([
+                    'user_id' => $user->id,
+                    'total_amount' => $totalAmount,
+                    'shipping_address' => request()->input('shipping_address', 'Jl. Veteran No. 8, Lowokwaru, Malang, Jawa Timur'),
+                    'status' => 'pending',
+                ]);
+
+                foreach ($validItems as $valid) {
+                    $product = $valid['product'];
+                    $purchaseQty = $valid['quantity'];
+                    $item = $valid['item'];
+
+                    // Decrement stock
+                    $product->stock -= $purchaseQty;
+                    $product->save();
+
+                    // Create OrderItem
+                    \App\Models\OrderItems::create([
+                        'order_id' => $order->id,
+                        'product_id' => $product->id,
+                        'seller_id' => $product->seller_id,
+                        'quantity' => $purchaseQty,
+                        'unit_price' => $valid['unit_price'],
+                        'fulfillment_status' => 'pending'
+                    ]);
+
+                    // Remove from cart
+                    $item->delete();
+
+                    if ($purchaseQty < $item->quantity) {
+                        $messages[] = "Product '{$product->name}' quantity reduced to {$purchaseQty} due to available stock.";
+                    }
                 }
+
+                $processed = true;
             }
         });
 
@@ -142,7 +190,7 @@ class CartsController extends Controller
             return redirect()->route('cart.index')->with('error', implode(' ', $messages));
         }
 
-        $success = 'Checkout completed successfully. Stock has been updated.';
+        $success = 'Checkout completed successfully. Your order #TRX-' . $order->id . ' has been created.';
         if (!empty($messages)) {
             $success .= ' ' . implode(' ', $messages);
         }

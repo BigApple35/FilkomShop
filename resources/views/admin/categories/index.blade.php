@@ -3,227 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FilkomShop - Manage Categories</title>
-
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Segoe UI',sans-serif;
-        }
-
-        body{
-            background:#f3f4f6;
-            padding:40px;
-        }
-
-        .container{
-            width:90%;
-            max-width:1400px;
-            margin:auto;
-        }
-
-        .header{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:25px;
-        }
-
-        .title{
-            font-size:40px;
-            font-weight:700;
-            color:#202124;
-        }
-
-        .title span{
-            color:#F4B400;
-        }
-
-        .success{
-            background:#d4edda;
-            color:#155724;
-            padding:15px 20px;
-            border-radius:10px;
-            margin-bottom:20px;
-        }
-
-        .card{
-            background:#fff;
-            padding:20px;
-            border-radius:20px;
-            box-shadow:0 4px 20px rgba(0,0,0,.08);
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-        }
-
-        thead{
-            background:#202124;
-            color:white;
-        }
-
-        th{
-            padding:18px;
-            text-align:left;
-            font-size:15px;
-            font-weight:600;
-        }
-
-        td{
-            padding:18px;
-            border-bottom:1px solid #e5e5e5;
-            font-size:15px;
-        }
-
-        tr:hover{
-            background:#fafafa;
-        }
-
-        .btn{
-            text-decoration:none;
-            border:none;
-            padding:9px 16px;
-            border-radius:7px;
-            cursor:pointer;
-            color:white;
-            font-size:13px;
-            font-weight:500;
-        }
-
-        .btn-view{
-            background:#4285F4;
-        }
-
-        .btn-delete{
-            background:#EA4335;
-        }
-
-        .btn-view:hover,
-        .btn-delete:hover{
-            opacity:.9;
-        }
-
-        .empty{
-            text-align:center;
-            color:#777;
-            padding:25px;
-        }
-
-        .badge{
-            background:#f1f3f4;
-            color:#5f6368;
-            padding:6px 12px;
-            border-radius:20px;
-            font-size:13px;
-            display:inline-block;
-        }
-
-        .stats{
-            margin-bottom:15px;
-            color:#5f6368;
-            font-size:14px;
-        }
-    </style>
+    <title>Manage Categories - FILKOMSHOP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-[#f3f3f3] min-h-screen m-0">
 
-<div class="container">
+    @include('layouts.admin_sidebar')
 
-    <div class="header">
-        <div class="title">
-            Manage <span>Categories</span>
+    <div class="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8">
+        <div>
+            <h1 class="text-5xl font-bold text-[#1f232b]">
+                Manage Categories
+            </h1>
+            <p class="text-gray-500 text-xl mt-2">
+                Create, read, and update category classifications
+            </p>
+        </div>
+
+        <div>
+            <a href="{{ route('admin.categories.create') }}" class="inline-flex items-center justify-center rounded-full bg-yellow-450 hover:bg-yellow-500 bg-[#ffc107] text-[#212529] px-6 py-3.5 text-base font-semibold transition gap-2 shadow-sm">
+                <span class="material-symbols-outlined text-lg font-bold">add</span>
+                Create Category
+            </a>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="success">
-            {{ session('success') }}
-        </div>
+    <div class="bg-emerald-50 border border-emerald-250 text-emerald-800 px-5 py-4 rounded-2xl mb-6 text-sm font-medium flex items-center gap-3 shadow-sm">
+        <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+        <span>{{ session('success') }}</span>
+    </div>
     @endif
 
-    <div class="stats">
-        Total Categories: <strong>{{ $categories->count() }}</strong>
+    <div class="bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200">
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-20">ID</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Category Name</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Slug</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-12 w-40">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($categories as $category)
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="px-6 py-5 text-sm font-semibold text-slate-400">#{{ $category->id }}</td>
+                        <td class="px-6 py-5 text-base font-extrabold text-[#202124]">{{ $category->name }}</td>
+                        <td class="px-6 py-5">
+                            <span class="inline-flex items-center text-xs font-bold bg-[#e8f0fe] text-[#1a73e8] border border-[#1a73e8]/10 px-3 py-1 rounded-full">
+                                {{ $category->slug ?? '-' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-5 text-right pr-12">
+                            <a href="{{ route('admin.categories.edit', $category->id) }}" class="inline-flex items-center justify-center rounded-full border border-slate-250 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-bold text-slate-700 transition gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-sm font-bold text-slate-550">edit</span>
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-slate-400">
+                            <span class="material-symbols-outlined text-slate-300 mb-2" style="font-size: 48px;">category</span>
+                            <div class="text-base font-bold text-slate-800">No categories found</div>
+                            <div class="text-sm mt-1">Add new classifications to organize your items.</div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="card">
-
-        <table>
-
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Category Name</th>
-                    <th>Slug</th>
-                    <th width="180">Action</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-            @forelse($categories as $category)
-
-                <tr>
-
-                    <td>{{ $category->id }}</td>
-
-                    <td>{{ $category->name }}</td>
-
-                    <td>
-                        <span class="badge">
-                            {{ $category->slug ?? '-' }}
-                        </span>
-                    </td>
-
-                    <td>
-
-                        <a
-                            href="{{ route('categories.show', $category->id) }}"
-                            class="btn btn-view">
-                            View
-                        </a>
-
-                        <form
-                            action="{{ route('categories.destroy', $category->id) }}"
-                            method="POST"
-                            style="display:inline;"
-                        >
-                            @csrf
-                            @method('DELETE')
-
-                            <button
-                                type="submit"
-                                class="btn btn-delete"
-                                onclick="return confirm('Delete this category?')">
-                                Delete
-                            </button>
-
-                        </form>
-
-                    </td>
-
-                </tr>
-
-            @empty
-
-                <tr>
-                    <td colspan="4" class="empty">
-                        No Categories Found
-                    </td>
-                </tr>
-
-            @endforelse
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
+    @include('layouts.admin_sidebar_footer')
 
 </body>
 </html>

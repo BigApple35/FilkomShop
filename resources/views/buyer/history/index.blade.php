@@ -101,7 +101,7 @@
 
         .fs-container {
             max-width: 1100px;
-            margin: 40px auto;
+            margin: 104px auto 40px auto;
             padding: 0 24px;
             min-height: 80vh;
         }
@@ -239,29 +239,7 @@
 </head>
 
 <body>
-    <nav class="fs-navbar">
-        <div class="fs-navbar-container">
-            <div class="fs-nav-left">
-                <a href="{{ url('/') }}" class="fs-brand">FILKOMSHOP</a>
-                <a href="{{ url('/') }}" class="fs-nav-link">Home</a>
-            </div>
-            <div class="fs-nav-center">
-                <input type="text" class="fs-search-input" placeholder="Search product...">
-                <button class="fs-btn-search">Search</button>
-            </div>
-            <div class="fs-nav-right">
-                @auth
-                <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-                    @csrf
-                    <button type="submit" class="fs-btn-login" style="cursor:pointer;">Logout</button>
-                </form>
-                @else
-                <a href="{{ route('login') }}" class="fs-btn-login">Login</a>
-                <a href="{{ route('register') }}" class="fs-btn-register">Register</a>
-                @endauth
-            </div>
-        </div>
-    </nav>
+    @include('layouts.navigation')
 
     <div class="fs-container">
         <div class="fs-header">

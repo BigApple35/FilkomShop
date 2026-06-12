@@ -10,17 +10,18 @@ use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductManagementController;
-use App\Http\Controllers\ItemController; // ← TAMBAHAN UNTUK ITEM MANAGEMENT
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SellerDashboardController;
 
 /*
 |--------------------------------------------------------------------------
 | Guest Routes (Belum Login)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -39,8 +40,18 @@ Route::middleware('auth')->group(function () {
 
     // Seller routes
     Route::prefix('seller')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [SellerDashboardController::class, 'index'])->name('seller.dashboard');
+
+        // Orders
         Route::get('/orders', [SellerOrderController::class, 'index'])->name('seller.orders.index');
         Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
+
+        // Products (seller-scoped, reuses ProductsController which already gates by role)
+        Route::get('/products', [ProductsController::class, 'index'])->name('seller.products.index');
+        Route::get('/products/create', [ProductsController::class, 'create'])->name('seller.products.create');
+        Route::get('/products/{products}', [ProductsController::class, 'show'])->name('seller.products.show');
+        Route::get('/products/{products}/edit', [ProductsController::class, 'edit'])->name('seller.products.edit');
     });
 
     // Checkout history routes
@@ -50,65 +61,31 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [CheckoutHistoryController::class, 'destroy'])->name('history.destroy');
     });
 
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-    // Shopping Cart
-    Route::get('/cart', [CartController::class, 'index']);
-    Route::get('/cart/add/{id}', [CartController::class, 'add']);
-    Route::get('/cart/delete/{id}', [CartController::class, 'delete']);
-
-    // Admin - Manage Products
-    Route::prefix('admin')->group(function () {
-        Route::get('/products', [ProductManagementController::class, 'index']);
-        Route::get('/products/create', [ProductManagementController::class, 'create']);
-        Route::post('/products/store', [ProductManagementController::class, 'store']);
-        Route::get('/products/edit/{id}', [ProductManagementController::class, 'edit']);
-        Route::post('/products/update/{id}', [ProductManagementController::class, 'update']);
-        Route::get('/products/delete/{id}', [ProductManagementController::class, 'delete']);
-    });
-
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-    // === TAMBAHAN UNTUK ITEM MANAGEMENT (CREATE + UPDATE) ===
-    Route::resource('items', ItemController::class);
-    // =======================================================
-
-    // Orders (mungkin milik user biasa, bukan seller)
-    Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-
-    // Categories 
-    Route::get('/categories',[CategoriesController::class, 'index'] )->name('categories.index');
-    Route::get('/categories/{category}',[CategoriesController::class, 'show'])->name('categories.show');
-    Route::delete('/categories/{category}',[CategoriesController::class, 'destroy'])->name('categories.destroy');
-
-});
-
-
-/*
-|--------------------------------------------------------------------------
-| Storefront Routes (Bebas, tanpa middleware auth)
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-    // Orders
-    Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-
-    // Shopping Cart
+    // Shopping Cart (Buyer CartsController)
     Route::get('/cart', [CartsController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartsController::class, 'store'])->name('cart.store');
     Route::post('/cart/checkout', [CartsController::class, 'checkout'])->name('cart.checkout');
     Route::patch('/cart/item/{id}', [CartsController::class, 'update'])->name('cart.update');
     Route::delete('/cart/item/{id}', [CartsController::class, 'destroy'])->name('cart.destroy');
 
-    // Shopping Cart
-    Route::get('/cart/add/{id}', [CartController::class, 'add']);
-    Route::get('/cart/delete/{id}', [CartController::class, 'delete']);
+    // Shopping Cart (Legacy CartController Fallbacks)
+    Route::get('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::get('/cart/delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Product Reviews
+    Route::post('/product/{id}/review', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // Item Management Resource
+    Route::resource('items', ItemController::class);
+
+    // Orders (User Biasa)
+    Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 
     /*
     |--------------------------------------------------------------------------
@@ -116,6 +93,9 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('admin')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
         // Manage Users
         Route::get('/users', [AuthController::class, 'manageUsers'])->name('admin.users.index');
         Route::get('/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
@@ -125,7 +105,13 @@ Route::middleware('auth')->group(function () {
         Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
         Route::delete('/users/{user}', [AuthController::class, 'deleteUser'])->name('admin.users.destroy');
 
-        // Manage Products
+        // Legacy Product Management Routing
+        Route::get('/products/delete/{id}', [ProductManagementController::class, 'delete'])->name('admin.products.delete');
+        Route::get('/products/edit/{id}', [ProductManagementController::class, 'edit'])->name('admin.products.edit-legacy');
+        Route::post('/products/store', [ProductManagementController::class, 'store'])->name('admin.products.store-legacy');
+        Route::post('/products/update/{id}', [ProductManagementController::class, 'update'])->name('admin.products.update-legacy');
+
+        // Modern Products Management Routing (ProductsController)
         Route::get('/products', [ProductsController::class, 'index'])->name('admin.products.index');
         Route::get('/products/create', [ProductsController::class, 'create'])->name('admin.products.create');
         Route::post('/products', [ProductsController::class, 'store'])->name('admin.products.store');
@@ -134,60 +120,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/products/{products}', [ProductsController::class, 'update'])->name('admin.products.update');
         Route::delete('/products/{products}', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
         Route::post('/products/{products}/image', [ProductsController::class, 'uploadImage'])->name('admin.products.image.upload');
+
+        // ========== MANAGE CATEGORIES (ADMIN) ==========
+        Route::get('/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
+        Route::get('/categories/create', [AdminCategoryController::class, 'create'])->name('admin.categories.create');
+        Route::post('/categories', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
+        Route::get('/categories/{id}/edit', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
+        Route::put('/categories/{id}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Profile & Incoming Orders
-    |--------------------------------------------------------------------------
-    */
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-    Route::put('/orders/{order}', [OrderController::class, 'update']) ->name('orders.update');
-    Route::get('/orders', [OrderController::class, 'index']) ->name('orders.index');
-/*
-|--------------------------------------------------------------------------
-| Fitur Khusus Seller & Buyer History
-|--------------------------------------------------------------------------
-*/
-// Seller Orders
-Route::prefix('seller')->group(function () {
-    Route::get('/orders', [SellerOrderController::class, 'index'])->name('seller.orders.index');
-    Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
-});
-
-// Buyer History
-Route::prefix('history')->group(function () {
-    Route::get('/', [CheckoutHistoryController::class, 'index'])->name('history.index');
-    Route::get('/{id}', [CheckoutHistoryController::class, 'show'])->name('history.show');
-    Route::delete('/{id}', [CheckoutHistoryController::class, 'destroy'])->name('history.destroy');
-});
-
-    /*
-    |--------------------------------------------------------------------------
-    | Admin - Manage Items
-    |--------------------------------------------------------------------------
-    */
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/products', [ProductsController::class, 'index'])
-        ->name('products.index');
-
-    Route::get('/products/create', [ProductsController::class, 'create'])
-        ->name('products.create');
-
-    Route::post('/products/store', [ProductsController::class, 'store'])
-        ->name('products.store');
-
-    Route::get('/products/{product}/edit', [ProductsController::class, 'edit'])
-        ->name('products.edit');
-
-    Route::put('/products/{product}', [ProductsController::class, 'update'])
-        ->name('products.update');
-
 });
 
 /*
@@ -198,8 +138,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', [StorefrontController::class, 'index']);
 Route::get('/product/{id}', [StorefrontController::class, 'show']);
 Route::get('/store/{sellerId}', [StorefrontController::class, 'store']);
-Route::get('/store/{sellerId}', [StorefrontController::class, 'store']);
 
 Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
 Route::get('/products/{products}', [ProductsController::class, 'show'])->name('products.show');
-});
+Route::post('/checkout', [CheckoutHistoryController::class, 'store'])->name('checkout.store');

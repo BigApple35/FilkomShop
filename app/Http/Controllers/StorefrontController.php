@@ -25,7 +25,7 @@ class StorefrontController extends Controller
 
     public function show($id)
     {
-        $product = Products::findOrFail($id);
+        $product = Products::with(['reviews.user', 'seller.user'])->findOrFail($id);
 
         return view('storefront.detail', compact('product'));
     }
